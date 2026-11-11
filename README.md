@@ -74,6 +74,12 @@ https://github.com/pep-ipg/pep-ipg-mcp
 این Skill را نصب کن.
 ```
 
+### Codex و سایر ابزارهای سازگار با Agent Skills
+
+```bash
+npx skills add pep-ipg/pep-ipg-mcp -a codex
+```
+
 ### claude.ai (وب، دسکتاپ، موبایل)
 
 فایل [`pep-ipg-skill.zip`](https://github.com/pep-ipg/pep-ipg-mcp/releases/latest/download/pep-ipg-skill.zip) را دانلود کنید و در بخش **Skills** تنظیمات Claude بارگذاری کنید.
@@ -146,6 +152,20 @@ claude mcp list   # بررسی اتصال
 }
 ```
 
+### Codex (CLI و افزونه IDE)
+
+```bash
+codex mcp add pep -- npx -y pep-ipg-mcp
+```
+
+یا در `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.pep]
+command = "npx"
+args = ["-y", "pep-ipg-mcp"]
+```
+
 ### Windsurf / سایر ابزارها
 
 هر ابزاری که MCP از نوع stdio را پشتیبانی کند، با دستور `npx -y pep-ipg-mcp` کار می‌کند.
@@ -167,6 +187,8 @@ docker run -d -p 3000:3000 --restart unless-stopped ghcr.io/pep-ipg/pep-ipg-mcp:
 ```bash
 claude mcp add --transport http pep https://YOUR-HOST/mcp
 ```
+
+در **ChatGPT** (پلن‌های پولی، با Developer Mode): همین آدرس را در بخش Connectors اضافه کنید. شبیه‌ساز در حالت آنلاین در دسترس نیست و فقط روی سیستم خود توسعه‌دهنده اجرا می‌شود.
 
 ## شبیه‌ساز درگاه (Sandbox)
 
