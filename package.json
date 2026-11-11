@@ -1,6 +1,6 @@
 {
   "name": "pep-ipg-mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "MCP server for the Pasargad Electronic Payment internet gateway (Dorsa protocol v28) — docs, endpoint contracts and error codes for AI coding assistants",
   "type": "module",
   "bin": {

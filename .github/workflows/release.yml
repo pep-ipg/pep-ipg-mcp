@@ -40,13 +40,14 @@ jobs:
       - run: npm run build
       - run: npm test
 
-      # Skipped when NPM_TOKEN is unset or this version is already on npm
-      # (for example, published by hand). A failure here does not block the
-      # GitHub Release below.
+      # npm Trusted Publishing (OIDC): no token needed once the trusted
+      # publisher is registered on npmjs.com. NPM_TOKEN, if still set, is
+      # used as a fallback. Needs npm >= 11.5.1. Skipped when this version
+      # is already on npm; a failure here does not block the GitHub Release.
       - name: Publish to npm
-        if: ${{ env.NODE_AUTH_TOKEN != '' }}
         continue-on-error: true
         run: |
+          npm install -g npm@latest
           VER=$(node -p "require('./package.json').version")
           if npm view "pep-ipg-mcp@$VER" version >/dev/null 2>&1; then
             echo "pep-ipg-mcp@$VER is already on npm, skipping"

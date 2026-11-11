@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1 — 1405/08/21
+- پلاگین Claude Code حالا سرور MCP را هم نصب می‌کند (ابزارهای مستندات، اعتبارسنجی و شبیه‌ساز)
+- انتشار npm با Trusted Publishing (بدون توکن)؛ شکست npm دیگر جلوی ساخت Release را نمی‌گیرد
+
 ## 1.2.0 — 1405/08/21
 - **شبیه‌ساز درگاه Dorsa v28**: getToken (JWT)، خرید، تسهیم، شارژ و قبض، صفحه پرداخت، callback، verify، confirm، reverse، استعلام و Refund، با ساعت مجازی و تزریق خطا
 - ابزارهای MCP: `sandbox_start`، `sandbox_pay`، `sandbox_status`، `sandbox_inject`، `sandbox_configure`، `sandbox_resolve`، `sandbox_reset`
