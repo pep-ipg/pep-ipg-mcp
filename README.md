@@ -112,6 +112,24 @@ claude mcp list   # بررسی اتصال
 
 هر ابزاری که MCP از نوع stdio را پشتیبانی کند، با دستور `npx -y pep-ipg-mcp` کار می‌کند.
 
+### سرور آنلاین (یک آدرس برای همه)
+
+سرور را یک‌بار اجرا کنید تا همه فقط با یک آدرس وصل شوند، بدون نصب:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/pep-ipg/pep-ipg-mcp)
+
+یا روی سرور خودتان با Docker:
+
+```bash
+docker run -d -p 3000:3000 --restart unless-stopped ghcr.io/pep-ipg/pep-ipg-mcp:latest
+```
+
+اتصال:
+
+```bash
+claude mcp add --transport http pep https://YOUR-HOST/mcp
+```
+
 ---
 
 ## نمونه استفاده

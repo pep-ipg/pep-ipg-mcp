@@ -16,3 +16,4 @@ SECURITY.md
 PUBLISHING.md
 docker-compose.yml
 deploy/
+render.yaml

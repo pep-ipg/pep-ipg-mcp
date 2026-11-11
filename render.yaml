@@ -1,0 +1,12 @@
+# Render Blueprint: one-click deploy of the public HTTP endpoint.
+# https://render.com/deploy?repo=https://github.com/pep-ipg/pep-ipg-mcp
+services:
+  - type: web
+    name: pep-ipg-mcp
+    runtime: docker
+    plan: free            # change to "starter" to avoid sleeping after inactivity
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
