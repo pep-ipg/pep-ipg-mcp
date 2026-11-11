@@ -1,0 +1,20 @@
+{
+  "name": "pep-ipg",
+  "owner": {
+    "name": "Pasargad Electronic Payment Co.",
+    "url": "https://github.com/pep-ipg"
+  },
+  "metadata": {
+    "description": "Claude plugins for integrating the Pasargad Electronic Payment (PEP) internet payment gateway"
+  },
+  "plugins": [
+    {
+      "name": "pep-ipg",
+      "source": "./",
+      "description": "Pasargad IPG (Dorsa protocol v28) integration: endpoint contracts, error codes, auth flow and implementation rules",
+      "version": "1.1.0",
+      "category": "development",
+      "keywords": ["payment-gateway", "pasargad", "pep", "ipg", "dorsa", "iran"]
+    }
+  ]
+}

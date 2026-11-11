@@ -49,7 +49,42 @@
 
 ---
 
-## نصب و اتصال
+## نصب سریع (پیشنهادی)
+
+بدون سرور، بدون npm و حتی بدون Node.js. مستندات کامل درگاه به‌صورت **Skill** مستقیماً از همین مخزن نصب می‌شود.
+
+### Claude Code: به‌عنوان Plugin
+
+```
+/plugin marketplace add pep-ipg/pep-ipg-mcp
+/plugin install pep-ipg@pep-ipg
+```
+
+بعد از نصب، Claude هر وقت درباره درگاه پاسارگاد سؤال یا کدی باشد خودش از Skill استفاده می‌کند. فراخوانی مستقیم: `/pep-ipg`
+
+### یا فقط از Claude بخواهید
+
+این را در Claude Code بنویسید:
+
+```
+https://github.com/pep-ipg/pep-ipg-mcp
+این Skill را نصب کن.
+```
+
+### claude.ai (وب، دسکتاپ، موبایل)
+
+فایل [`pep-ipg-skill.zip`](https://github.com/pep-ipg/pep-ipg-mcp/releases/latest/download/pep-ipg-skill.zip) را دانلود کنید و در بخش **Skills** تنظیمات Claude بارگذاری کنید.
+
+### دستی
+
+```bash
+git clone https://github.com/pep-ipg/pep-ipg-mcp.git
+cp -r pep-ipg-mcp/skills/pep-ipg ~/.claude/skills/
+```
+
+---
+
+## نصب به‌صورت MCP Server
 
 > پیش‌نیاز: [Node.js](https://nodejs.org) نسخه 18 یا بالاتر. برای Claude Desktop (روش یک‌کلیکی) لازم نیست.
 
@@ -169,6 +204,8 @@ src/
   types.ts
 test/              تست‌ها (node:test)
 manifest.json      پیکربندی افزونه Claude Desktop (.mcpb)
+.claude-plugin/    Plugin و Marketplace برای Claude Code
+skills/pep-ipg/    Skill (SKILL.md + references، ساخته‌شده از data/ با npm run build:skill)
 docker-compose.yml اجرای سرور HTTP با Docker
 deploy/            نمونه Nginx (HTTPS) و systemd
 ```

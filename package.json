@@ -21,7 +21,8 @@
     "dev": "tsx watch src/server.ts",
     "test": "tsx --test test/*.test.ts",
     "inspect": "npx @modelcontextprotocol/inspector node dist/stdio.js",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "npm run build && npm test",
+    "build:skill": "node scripts/build-skill.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.20.0",

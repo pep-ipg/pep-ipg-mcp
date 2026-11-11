@@ -17,3 +17,6 @@ PUBLISHING.md
 docker-compose.yml
 deploy/
 render.yaml
+.claude-plugin/
+skills/
+scripts/

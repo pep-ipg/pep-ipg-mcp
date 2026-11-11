@@ -18,3 +18,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test
+      - name: Skill references are in sync with data/
+        run: |
+          npm run build:skill
+          git diff --exit-code -- skills/ || (echo "::error::Run 'npm run build:skill' and commit skills/pep-ipg/references" && exit 1)

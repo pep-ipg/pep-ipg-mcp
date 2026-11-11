@@ -49,10 +49,15 @@ jobs:
           npm prune --omit=dev
           npx -y @anthropic-ai/mcpb pack . pep-ipg-mcp.mcpb
 
+      - name: Package the skill for claude.ai
+        run: cd skills && zip -r ../pep-ipg-skill.zip pep-ipg
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: pep-ipg-mcp.mcpb
+          files: |
+            pep-ipg-mcp.mcpb
+            pep-ipg-skill.zip
           generate_release_notes: true
 
   docker:
