@@ -1,6 +1,6 @@
 {
   "name": "pep-ipg",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Pasargad Electronic Payment IPG (Dorsa protocol v28) integration skill: endpoint contracts, 202 error codes, JWT auth flow and implementation rules",
   "author": {
     "name": "Pasargad Electronic Payment Co.",
@@ -9,5 +9,12 @@
   "homepage": "https://github.com/pep-ipg/pep-ipg-mcp",
   "repository": "https://github.com/pep-ipg/pep-ipg-mcp",
   "license": "MIT",
-  "keywords": ["payment-gateway", "pasargad", "pep", "ipg", "dorsa", "iran"]
+  "keywords": [
+    "payment-gateway",
+    "pasargad",
+    "pep",
+    "ipg",
+    "dorsa",
+    "iran"
+  ]
 }

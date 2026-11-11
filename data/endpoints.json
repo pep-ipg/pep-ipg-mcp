@@ -1,0 +1,1611 @@
+{
+  "source": "Dorsa Protocol v28.0 (1405/08/12)",
+  "baseUrlNote": "همه مسیرها نسبت به <base url> هستند که هنگام راه‌اندازی ترمینال به پذیرنده اعلام می‌شود. همه سرویس‌ها با متد POST و بدنه JSON فراخوانی می‌شوند.",
+  "endpoints": [
+    {
+      "id": "get-token",
+      "title": "دریافت توکن (احراز هویت)",
+      "path": "/token/getToken",
+      "auth": "none",
+      "group": "auth",
+      "summary": "با نام کاربری و رمز عبور ترمینال یک JWT دریافت می‌شود که در همه سرویس‌های بعدی در هدر Authorization: Bearer <token> ارسال می‌شود. اعتبار پیش‌فرض ۱۰ دقیقه است (از claim exp توکن قابل استخراج است). با دریافت 401 مجدداً احراز هویت کنید.",
+      "fields": [
+        {
+          "name": "username",
+          "type": "string",
+          "req": "M",
+          "desc": "نام کاربری سرویس"
+        },
+        {
+          "name": "password",
+          "type": "string",
+          "req": "M",
+          "desc": "رمز عبور سرویس"
+        }
+      ],
+      "request": {
+        "username": "<USERNAME>",
+        "password": "<PASSWORD>"
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0,
+        "token": "<JWT>",
+        "username": "<USERNAME>",
+        "firstName": "firstName",
+        "lastName": "lastName",
+        "userId": "17",
+        "roles": [
+          {
+            "authority": "mpg"
+          },
+          {
+            "authority": "merchant"
+          }
+        ]
+      }
+    },
+    {
+      "id": "purchase",
+      "title": "خرید (و خرید شناسه‌دار)",
+      "path": "/api/payment/purchase",
+      "auth": "bearer",
+      "group": "payment",
+      "summary": "ثبت درخواست خرید و دریافت آدرس یکبارمصرف صفحه پرداخت. پذیرنده کاربر را به data.url هدایت می‌کند و data.urlId را برای verify/confirm/reverse/inquiry ذخیره می‌کند. برای خرید شناسه‌دار، paymentCode نیز ارسال می‌شود. serviceCode=8 و serviceType=PURCHASE.",
+      "fields": [
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره فاکتور یکتا"
+        },
+        {
+          "name": "invoiceDate",
+          "type": "string",
+          "req": "M",
+          "desc": "تاریخ فاکتور (فرمت دلخواه، مثلاً 1405/05/04)"
+        },
+        {
+          "name": "amount",
+          "type": "integer",
+          "req": "M",
+          "desc": "مبلغ به ریال"
+        },
+        {
+          "name": "callbackApi",
+          "type": "string",
+          "req": "M",
+          "desc": "آدرس بازگشت کاربر پس از پرداخت؛ دامنه آن باید در ثبت‌نام ترمینال تعریف شده باشد"
+        },
+        {
+          "name": "mobileNumber",
+          "type": "string",
+          "req": "C",
+          "desc": "موبایل پرداخت‌کننده؛ اگر احراز هویت قوی/تطبیق کارت و موبایل در قرارداد فعال باشد اجباری است"
+        },
+        {
+          "name": "serviceCode",
+          "type": "string",
+          "req": "M",
+          "desc": "کد سرویس: \"8\""
+        },
+        {
+          "name": "serviceType",
+          "type": "string",
+          "req": "M",
+          "desc": "نوع سرویس: \"PURCHASE\""
+        },
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره ترمینال"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "req": "O",
+          "desc": "توضیحات"
+        },
+        {
+          "name": "payerMail",
+          "type": "string",
+          "req": "O",
+          "desc": "ایمیل پرداخت‌کننده"
+        },
+        {
+          "name": "payerName",
+          "type": "string",
+          "req": "O",
+          "desc": "نام پرداخت‌کننده"
+        },
+        {
+          "name": "nationalCode",
+          "type": "string",
+          "req": "C",
+          "desc": "کد ملی؛ اگر تطبیق کد ملی و کارت فعال باشد اجباری است"
+        },
+        {
+          "name": "pans",
+          "type": "string",
+          "req": "O",
+          "desc": "شماره کارت‌های مجاز برای پرداخت"
+        },
+        {
+          "name": "localization",
+          "type": "string",
+          "req": "O",
+          "desc": "زبان صفحه پرداخت: fa (پیش‌فرض) یا en — از نسخه 27"
+        },
+        {
+          "name": "paymentCode",
+          "type": "string",
+          "req": "O",
+          "desc": "شناسه پرداخت مرچنت — فقط در خرید شناسه‌دار (در آن حالت اجباری)"
+        }
+      ],
+      "request": {
+        "invoice": "20301112",
+        "invoiceDate": "1405/05/04",
+        "amount": 1000,
+        "callbackApi": "https://shop.example.ir/payment/callback",
+        "mobileNumber": "09120000000",
+        "serviceCode": "8",
+        "serviceType": "PURCHASE",
+        "terminalNumber": 1234567,
+        "description": "order #20301112",
+        "payerMail": "",
+        "payerName": "",
+        "pans": "",
+        "nationalCode": ""
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0,
+        "data": {
+          "urlId": "8dcc5cd0ef7348548f8dc2ab29ebe11a7ad3eaad000000001234567",
+          "url": "<payment-page-base>/8dcc5cd0ef7348548f8dc2ab29ebe11a7ad3eaad000000001234567"
+        }
+      }
+    },
+    {
+      "id": "multiacc-purchase",
+      "title": "خرید با تسهیم (چندشبایی)",
+      "path": "/api/payment/multiacc/purchase",
+      "auth": "bearer",
+      "group": "payment",
+      "summary": "خرید با تقسیم مبلغ بین حداکثر ۱۰ شبا. serviceCode=9 و serviceType=MULTIACCPURCHASE. sharedValue سه حالت دارد: مبلغی (مقادیر بالای 100)، درصدی (زیر 100)، درصدی اعشاری (زیر 100 و اعشاری). شباها بدون IR ارسال شوند.",
+      "fields": [
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره فاکتور یکتا"
+        },
+        {
+          "name": "invoiceDate",
+          "type": "string",
+          "req": "M",
+          "desc": "تاریخ فاکتور"
+        },
+        {
+          "name": "amount",
+          "type": "integer",
+          "req": "M",
+          "desc": "مبلغ کل به ریال"
+        },
+        {
+          "name": "callbackApi",
+          "type": "string",
+          "req": "M",
+          "desc": "آدرس بازگشت"
+        },
+        {
+          "name": "mobileNumber",
+          "type": "string",
+          "req": "C",
+          "desc": "موبایل پرداخت‌کننده (در صورت فعال بودن احراز هویت قوی اجباری)"
+        },
+        {
+          "name": "serviceCode",
+          "type": "string",
+          "req": "M",
+          "desc": "\"9\""
+        },
+        {
+          "name": "serviceType",
+          "type": "string",
+          "req": "M",
+          "desc": "\"MULTIACCPURCHASE\""
+        },
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره ترمینال"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "req": "O",
+          "desc": "توضیحات"
+        },
+        {
+          "name": "payerMail",
+          "type": "string",
+          "req": "O",
+          "desc": "ایمیل"
+        },
+        {
+          "name": "payerName",
+          "type": "string",
+          "req": "O",
+          "desc": "نام"
+        },
+        {
+          "name": "pans",
+          "type": "string",
+          "req": "O",
+          "desc": "شماره کارت‌ها"
+        },
+        {
+          "name": "paymentCode",
+          "type": "string",
+          "req": "O",
+          "desc": "شناسه پرداخت — فقط در خرید شناسه‌دار با تسهیم (v28) و در آن حالت اجباری"
+        },
+        {
+          "name": "sharedValue",
+          "type": "array",
+          "req": "M",
+          "desc": "آرایه رشته‌ای سهم هر شبا (مبلغ، درصد یا درصد اعشاری)"
+        },
+        {
+          "name": "sheba",
+          "type": "array",
+          "req": "M",
+          "desc": "آرایه شباها بدون IR (۲۴ رقم)، حداکثر ۱۰"
+        }
+      ],
+      "request": {
+        "invoice": "1112223456",
+        "invoiceDate": "1405/05/04",
+        "amount": 10000,
+        "callbackApi": "https://shop.example.ir/payment/callback",
+        "serviceCode": "9",
+        "serviceType": "MULTIACCPURCHASE",
+        "terminalNumber": 1234567,
+        "sharedValue": [
+          "50",
+          "40",
+          "10"
+        ],
+        "sheba": [
+          "430570023980001305443101",
+          "790570022580001305443001",
+          "490570023910001305443001"
+        ]
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0,
+        "data": {
+          "urlId": "<urlId>",
+          "url": "<payment-page-url>"
+        }
+      }
+    },
+    {
+      "id": "multiacc-payment-code",
+      "title": "خرید شناسه‌دار با تسهیم (v28)",
+      "path": "/api/payment/multiacc/purchase",
+      "auth": "bearer",
+      "group": "payment",
+      "summary": "خرید با تقسیم مبلغ بین حداکثر ۱۰ شبا. serviceCode=9 و serviceType=MULTIACCPURCHASE. sharedValue سه حالت دارد: مبلغی (مقادیر بالای 100)، درصدی (زیر 100)، درصدی اعشاری (زیر 100 و اعشاری). شباها بدون IR ارسال شوند.",
+      "fields": [
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره فاکتور یکتا"
+        },
+        {
+          "name": "invoiceDate",
+          "type": "string",
+          "req": "M",
+          "desc": "تاریخ فاکتور"
+        },
+        {
+          "name": "amount",
+          "type": "integer",
+          "req": "M",
+          "desc": "مبلغ کل به ریال"
+        },
+        {
+          "name": "callbackApi",
+          "type": "string",
+          "req": "M",
+          "desc": "آدرس بازگشت"
+        },
+        {
+          "name": "mobileNumber",
+          "type": "string",
+          "req": "C",
+          "desc": "موبایل پرداخت‌کننده (در صورت فعال بودن احراز هویت قوی اجباری)"
+        },
+        {
+          "name": "serviceCode",
+          "type": "string",
+          "req": "M",
+          "desc": "\"9\""
+        },
+        {
+          "name": "serviceType",
+          "type": "string",
+          "req": "M",
+          "desc": "\"MULTIACCPURCHASE\""
+        },
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره ترمینال"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "req": "O",
+          "desc": "توضیحات"
+        },
+        {
+          "name": "payerMail",
+          "type": "string",
+          "req": "O",
+          "desc": "ایمیل"
+        },
+        {
+          "name": "payerName",
+          "type": "string",
+          "req": "O",
+          "desc": "نام"
+        },
+        {
+          "name": "pans",
+          "type": "string",
+          "req": "O",
+          "desc": "شماره کارت‌ها"
+        },
+        {
+          "name": "paymentCode",
+          "type": "string",
+          "req": "M",
+          "desc": "شناسه پرداخت — فقط در خرید شناسه‌دار با تسهیم (v28) و در آن حالت اجباری"
+        },
+        {
+          "name": "sharedValue",
+          "type": "array",
+          "req": "M",
+          "desc": "آرایه رشته‌ای سهم هر شبا (مبلغ، درصد یا درصد اعشاری)"
+        },
+        {
+          "name": "sheba",
+          "type": "array",
+          "req": "M",
+          "desc": "آرایه شباها بدون IR (۲۴ رقم)، حداکثر ۱۰"
+        }
+      ],
+      "request": {
+        "invoice": "1112223456",
+        "invoiceDate": "1405/05/04",
+        "amount": 10000,
+        "callbackApi": "https://shop.example.ir/payment/callback",
+        "serviceCode": "9",
+        "serviceType": "MULTIACCPURCHASE",
+        "terminalNumber": 1234567,
+        "sharedValue": [
+          "50",
+          "40",
+          "10"
+        ],
+        "sheba": [
+          "430570023980001305443101",
+          "790570022580001305443001",
+          "490570023910001305443001"
+        ],
+        "paymentCode": "7878"
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0,
+        "data": {
+          "urlId": "<urlId>",
+          "url": "<payment-page-url>"
+        }
+      }
+    },
+    {
+      "id": "topup-bill",
+      "title": "خرید شارژ / بسته اینترنتی / پرداخت قبض",
+      "path": "/api/payment/pre-transaction",
+      "auth": "bearer",
+      "group": "payment",
+      "summary": "ثبت درخواست شارژ مستقیم (MCI=1, MTN=2, RTL=3)، شارژ پین/گروهی (MCI-PIN=5, MTN-PIN=6, RTL-PIN=7)، بسته اینترنتی (با productCode) و قبض (BILL=4 با billId و paymentId). در پاسخ، data خودِ آدرس صفحه پرداخت (رشته) است، نه آبجکت.",
+      "fields": [
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره یکتای تراکنش"
+        },
+        {
+          "name": "invoiceDate",
+          "type": "string",
+          "req": "O",
+          "desc": "تاریخ فاکتور"
+        },
+        {
+          "name": "amount",
+          "type": "integer",
+          "req": "M",
+          "desc": "مبلغ به ریال"
+        },
+        {
+          "name": "callbackApi",
+          "type": "string",
+          "req": "M",
+          "desc": "آدرس بازگشت"
+        },
+        {
+          "name": "mobileNumber",
+          "type": "string",
+          "req": "C",
+          "desc": "برای شارژ مستقیم و بسته اجباری؛ برای قبض اختیاری"
+        },
+        {
+          "name": "serviceCode",
+          "type": "string",
+          "req": "M",
+          "desc": "1,2,3,4,5,6,7"
+        },
+        {
+          "name": "serviceType",
+          "type": "string",
+          "req": "M",
+          "desc": "MCI, MTN, RTL, BILL, MCI-PIN, MTN-PIN, RTL-PIN"
+        },
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره ترمینال"
+        },
+        {
+          "name": "count",
+          "type": "integer",
+          "req": "C",
+          "desc": "تعداد شارژ — برای شارژ عادی و گروهی (PIN) اجباری"
+        },
+        {
+          "name": "productCode",
+          "type": "string",
+          "req": "C",
+          "desc": "کد محصول — برای بسته اینترنتی اجباری"
+        },
+        {
+          "name": "billId",
+          "type": "string",
+          "req": "C",
+          "desc": "شناسه قبض — برای BILL اجباری"
+        },
+        {
+          "name": "paymentId",
+          "type": "string",
+          "req": "C",
+          "desc": "شناسه پرداخت — برای BILL اجباری"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "req": "O",
+          "desc": "توضیحات"
+        },
+        {
+          "name": "payerMail",
+          "type": "string",
+          "req": "O",
+          "desc": "ایمیل"
+        },
+        {
+          "name": "payerName",
+          "type": "string",
+          "req": "O",
+          "desc": "نام"
+        },
+        {
+          "name": "nationalCode",
+          "type": "string",
+          "req": "O",
+          "desc": "کد ملی"
+        },
+        {
+          "name": "pans",
+          "type": "string",
+          "req": "O",
+          "desc": "شماره کارت‌ها"
+        }
+      ],
+      "request": {
+        "invoice": "11122234",
+        "invoiceDate": "1405/05/04",
+        "amount": 12000,
+        "callbackApi": "https://shop.example.ir/payment/callback",
+        "serviceCode": "4",
+        "serviceType": "BILL",
+        "terminalNumber": 1234567,
+        "billId": "1234567804121",
+        "paymentId": "1270358"
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0,
+        "data": "<payment-page-url>"
+      }
+    },
+    {
+      "id": "confirm-payment",
+      "title": "تایید آنی خرید (confirm)",
+      "path": "/api/payment/confirm-transactions",
+      "auth": "bearer",
+      "group": "settlement",
+      "summary": "تایید نهایی و آنی تراکنش؛ پس از آن امکان reverse وجود ندارد و مبلغ در سیکل شاپرکی به حساب پذیرنده واریز می‌شود. فراخوانی تکراری خطای 13029 (قبلاً تایید شده) برمی‌گرداند.",
+      "fields": [
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره فاکتور ارسالی در درخواست خرید"
+        },
+        {
+          "name": "urlId",
+          "type": "string",
+          "req": "M",
+          "desc": "urlId دریافتی از پاسخ خرید"
+        }
+      ],
+      "request": {
+        "invoice": "203011121",
+        "urlId": "dfbb284970e05f5a287804966f388deed2fdbcc6000000001234567"
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0,
+        "data": {
+          "invoice": "203011121",
+          "referenceNumber": "141010031417",
+          "trackId": "9",
+          "maskedCardNumber": "603770******0340",
+          "hashedCardNumber": "<sha256>",
+          "requestDate": "2024-08-14 12:18:31.000000000",
+          "amount": 1000
+        }
+      }
+    },
+    {
+      "id": "verify-transactions",
+      "title": "تاییدیه با مهلت زمانی (verify)",
+      "path": "/api/payment/verify-transactions",
+      "auth": "bearer",
+      "group": "settlement",
+      "summary": "پس از بازگشت کاربر باید verify ارسال شود؛ در غیر این صورت وجه به مشتری برمی‌گردد. تا پایان مهلت توافقی، پذیرنده همچنان می‌تواند reverse کند و پس از آن سوییچ تراکنش را خودکار confirm می‌کند. پاسخ فقط پیام موفقیت دارد؛ برای جزئیات از verify-payment استفاده کنید. با checkVerify=true، verify تکراری خطای 13428 می‌گیرد.",
+      "fields": [
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره فاکتور"
+        },
+        {
+          "name": "urlId",
+          "type": "string",
+          "req": "M",
+          "desc": "urlId پاسخ خرید"
+        },
+        {
+          "name": "checkVerify",
+          "type": "boolean",
+          "req": "O",
+          "desc": "true: verify تکراری خطای 13428 برگرداند؛ false/خالی: پاسخ موفق"
+        }
+      ],
+      "request": {
+        "checkVerify": true,
+        "invoice": "2030111212",
+        "urlId": "291fc237b92f43fbf8f51616d2d670149312c0fb000000001234567"
+      },
+      "response": {
+        "data": "تراکنش موفق است",
+        "resultMsg": "Successful",
+        "resultCode": 0
+      }
+    },
+    {
+      "id": "verify-payment",
+      "title": "تاییدیه با اطلاعات تکمیلی",
+      "path": "/api/payment/verify-payment",
+      "auth": "bearer",
+      "group": "settlement",
+      "summary": "عملیات همانند verify-transactions است؛ تفاوت فقط در پاسخ است که شامل referenceNumber، trackId، شماره کارت ماسک‌شده و هش‌شده (sha256)، تاریخ و مبلغ است. برای تطبیق مبلغ پیش از تحویل خدمت توصیه می‌شود.",
+      "fields": [
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره فاکتور"
+        },
+        {
+          "name": "urlId",
+          "type": "string",
+          "req": "M",
+          "desc": "urlId پاسخ خرید"
+        },
+        {
+          "name": "checkVerify",
+          "type": "boolean",
+          "req": "O",
+          "desc": "مانند verify"
+        }
+      ],
+      "request": {
+        "checkVerify": true,
+        "invoice": "20301112123",
+        "urlId": "55358de10d025f49050e9913e7ca425d20185eb2000000001234567"
+      },
+      "response": {
+        "data": {
+          "invoice": "20301112123",
+          "referenceNumber": "141010031419",
+          "trackId": "11",
+          "maskedCardNumber": "603770******0340",
+          "hashedCardNumber": "<sha256>",
+          "requestDate": "2024-08-14 12:23:34.000000000",
+          "amount": 1000
+        },
+        "resultMsg": "Successful",
+        "resultCode": 0
+      }
+    },
+    {
+      "id": "reverse-payment",
+      "title": "برگشت تراکنش (reverse / اصلاحیه)",
+      "path": "/api/payment/reverse-transactions",
+      "auth": "bearer",
+      "group": "settlement",
+      "summary": "ابطال تراکنش و بازگشت وجه به دارنده کارت در سیکل شاپرکی؛ فقط برای خرید و خرید تسهیمی و حداکثر تا مهلت اعلامی (پیش‌فرض ۲۵ دقیقه، قابل کاهش تا صفر). پس از confirm امکان‌پذیر نیست؛ در آن حالت از refund استفاده کنید.",
+      "fields": [
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره فاکتور"
+        },
+        {
+          "name": "urlId",
+          "type": "string",
+          "req": "M",
+          "desc": "urlId پاسخ خرید"
+        }
+      ],
+      "request": {
+        "invoice": "203011121234",
+        "urlId": "f2560bf76dfef9c51af9767e975dc02a739fbbd7000000001234567"
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0
+      }
+    },
+    {
+      "id": "payment-inquiry",
+      "title": "استعلام وضعیت تراکنش",
+      "path": "/api/payment/payment-inquiry",
+      "auth": "bearer",
+      "group": "inquiry",
+      "summary": "برای تعیین تکلیف وقتی callback نرسیده یا timeout شده است. برای قبض از billId+paymentId و برای سایر تراکنش‌ها از invoiceId استفاده کنید. وضعیت در data.status است (0, 2, 13016, 13025, 13029, 13033, 13034). با checkVerify=true، اگر وضعیت نامشخص ولی verify موفق ثبت شده باشد status=13034 برمی‌گردد.",
+      "fields": [
+        {
+          "name": "invoiceId",
+          "type": "string",
+          "req": "C",
+          "desc": "شماره فاکتور (برای غیر قبض)"
+        },
+        {
+          "name": "billId",
+          "type": "string",
+          "req": "C",
+          "desc": "شناسه قبض (برای قبض)"
+        },
+        {
+          "name": "paymentId",
+          "type": "string",
+          "req": "C",
+          "desc": "شناسه پرداخت (برای قبض)"
+        },
+        {
+          "name": "checkVerify",
+          "type": "boolean",
+          "req": "O",
+          "desc": "اطلاع از ارسال verify"
+        }
+      ],
+      "request": {
+        "invoiceId": "203011121234",
+        "checkVerify": true
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0,
+        "data": {
+          "status": 13033,
+          "trackId": "12",
+          "transactionId": "50333",
+          "amount": 1000,
+          "cardNumber": "603770******0340",
+          "invoice": "203011121234",
+          "url": "<urlId>",
+          "referenceNumber": "141010031420",
+          "requestDate": "2024-08-14T12:25:31.000"
+        }
+      }
+    },
+    {
+      "id": "payment-inquiry-v2",
+      "title": "استعلام وضعیت تراکنش با کارت هش‌شده",
+      "path": "/api/payment/payment-inquiryv2",
+      "auth": "bearer",
+      "group": "inquiry",
+      "summary": "مانند payment-inquiry، با فیلد اضافه hashedCardNumber (sha256 شماره کارت) در پاسخ — مناسب برای تطبیق کارت بدون نگهداری شماره کامل.",
+      "fields": [
+        {
+          "name": "invoiceId",
+          "type": "string",
+          "req": "C",
+          "desc": "شماره فاکتور"
+        },
+        {
+          "name": "billId",
+          "type": "string",
+          "req": "C",
+          "desc": "شناسه قبض"
+        },
+        {
+          "name": "paymentId",
+          "type": "string",
+          "req": "C",
+          "desc": "شناسه پرداخت"
+        },
+        {
+          "name": "checkVerify",
+          "type": "boolean",
+          "req": "O",
+          "desc": "اطلاع از ارسال verify"
+        }
+      ],
+      "request": {
+        "invoiceId": "14030620",
+        "checkVerify": false
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0,
+        "data": {
+          "status": 13029,
+          "trackId": "10",
+          "transactionId": "43",
+          "amount": 10000,
+          "cardNumber": "603770******0340",
+          "invoice": "14030620",
+          "url": "<urlId>",
+          "referenceNumber": "141010000008",
+          "requestDate": "2024-09-10 11:51:56.000000000",
+          "hashedCardNumber": "<sha256>"
+        }
+      }
+    },
+    {
+      "id": "refund-transactions",
+      "title": "برگشت از خرید (Refund)",
+      "path": "/api/payment/refund-transactions",
+      "auth": "bearer",
+      "group": "refund",
+      "summary": "بازگشت تمام یا بخشی از وجه یک خرید تایید‌شده به کارت مشتری. مبلغ باید کمتر یا مساوی مبلغ اصلی باشد. type: RefundOnline یا RefundOffline. ترمینال‌های استفاده‌کننده رفتار پیش‌فرض اصلاحیه دارند.",
+      "fields": [
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره فاکتور تراکنش اصلی"
+        },
+        {
+          "name": "amount",
+          "type": "integer",
+          "req": "M",
+          "desc": "مبلغ بازگشتی به ریال (≤ مبلغ اصلی)"
+        },
+        {
+          "name": "pan",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره کارت"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "req": "M",
+          "desc": "RefundOnline | RefundOffline"
+        },
+        {
+          "name": "urlId",
+          "type": "string",
+          "req": "M",
+          "desc": "urlId تراکنش اصلی"
+        }
+      ],
+      "request": {
+        "amount": 1000,
+        "invoice": "1731501497396312038",
+        "pan": "<PAN>",
+        "type": "RefundOnline",
+        "urlId": "a8b008d2b76733958b4c975279a358e2e8d545e0000000001234567"
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0
+      }
+    },
+    {
+      "id": "inquiry-confirm-pin",
+      "title": "تایید رمز کارت",
+      "path": "/api/payment/inquiry-confirm-pin",
+      "auth": "bearer",
+      "group": "card",
+      "summary": "استعلام و تایید رمز ثابت کارت. داده‌های حساس کارت (cvv2، pin2) را دریافت می‌کند؛ هرگز لاگ یا ذخیره نشوند.",
+      "fields": [
+        {
+          "name": "cardNumber",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره کارت"
+        },
+        {
+          "name": "cvv2",
+          "type": "string",
+          "req": "M",
+          "desc": "CVV2"
+        },
+        {
+          "name": "expireMonth",
+          "type": "string",
+          "req": "M",
+          "desc": "ماه انقضا"
+        },
+        {
+          "name": "expireYear",
+          "type": "string",
+          "req": "M",
+          "desc": "سال انقضا"
+        },
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره فاکتور"
+        },
+        {
+          "name": "merchantNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره پذیرنده"
+        },
+        {
+          "name": "pin2",
+          "type": "string",
+          "req": "M",
+          "desc": "رمز دوم"
+        },
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره پایانه"
+        }
+      ],
+      "request": {
+        "cardNumber": "<PAN>",
+        "cvv2": "<CVV2>",
+        "expireMonth": "12",
+        "expireYear": "08",
+        "invoice": "001",
+        "merchantNumber": 123456789,
+        "pin2": "<PIN2>",
+        "terminalNumber": 123456789
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0
+      }
+    },
+    {
+      "id": "inquiry-mini-statement",
+      "title": "چکیده حساب (۱۰ گردش آخر)",
+      "path": "/api/payment/inquiry-mini-statement",
+      "auth": "bearer",
+      "group": "card",
+      "summary": "دریافت ۱۰ گردش آخر حساب. فیلد description پاسخ با انکودینگ ایران‌سیستم است. ورودی شامل داده حساس کارت است.",
+      "fields": [
+        {
+          "name": "cardNumber",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره کارت"
+        },
+        {
+          "name": "cvv2",
+          "type": "string",
+          "req": "M",
+          "desc": "CVV2"
+        },
+        {
+          "name": "expireMonth",
+          "type": "string",
+          "req": "M",
+          "desc": "ماه انقضا"
+        },
+        {
+          "name": "expireYear",
+          "type": "string",
+          "req": "M",
+          "desc": "سال انقضا"
+        },
+        {
+          "name": "invoice",
+          "type": "string",
+          "req": "O",
+          "desc": "شماره فاکتور"
+        },
+        {
+          "name": "merchantNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره پذیرنده"
+        },
+        {
+          "name": "pin2",
+          "type": "string",
+          "req": "M",
+          "desc": "رمز دوم"
+        },
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره پایانه"
+        }
+      ],
+      "request": {
+        "cardNumber": "<PAN>",
+        "cvv2": "<CVV2>",
+        "expireMonth": "12",
+        "expireYear": "08",
+        "merchantNumber": 123456789,
+        "pin2": "<PIN2>",
+        "terminalNumber": 123456789
+      },
+      "response": {
+        "data": [
+          {
+            "amountBalance": "10001",
+            "amountTransaction": "20001",
+            "authorizationResponseID": "11",
+            "description": "...",
+            "localDate": "1403/01/01",
+            "localTime": "1403-01-01 15:04:05"
+          }
+        ],
+        "resultCode": 0,
+        "resultMsg": "Successful"
+      }
+    },
+    {
+      "id": "provider-get-token",
+      "title": "دریافت توکن سرویس Refund (Provider)",
+      "path": "/token/getToken",
+      "auth": "none",
+      "group": "provider-refund",
+      "summary": "مانند get-token ولی با آرایه provider_credentials (client_id، client_secret، name، username، password). name نام provider است (مثلاً toman). این توکن برای سرویس‌های Refund مبتنی بر Provider استفاده می‌شود.",
+      "fields": [
+        {
+          "name": "username",
+          "type": "string",
+          "req": "M",
+          "desc": "نام کاربری"
+        },
+        {
+          "name": "password",
+          "type": "string",
+          "req": "M",
+          "desc": "رمز عبور"
+        },
+        {
+          "name": "provider_credentials",
+          "type": "array",
+          "req": "M",
+          "desc": "[{client_id, client_secret, name, username, password}]"
+        }
+      ],
+      "request": {
+        "username": "<USERNAME>",
+        "password": "<PASSWORD>",
+        "provider_credentials": [
+          {
+            "client_id": "<CLIENT_ID>",
+            "client_secret": "<CLIENT_SECRET>",
+            "name": "toman",
+            "username": "<PROVIDER_USERNAME>",
+            "password": "<PROVIDER_PASSWORD>"
+          }
+        ]
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0,
+        "token": "<JWT>"
+      }
+    },
+    {
+      "id": "provider-refund-toman",
+      "title": "برگشت از خرید از طریق Provider (toman)",
+      "path": "/api/payment/refund-transactions-3rd-party/toman",
+      "auth": "bearer",
+      "group": "provider-refund",
+      "summary": "واریز وجه بازگشتی از طریق Provider. تراکنش اصلی باید تایید‌شده باشد. اگر amount ارسال نشود، کل مبلغ خرید اصلی برگشت داده می‌شود. invoiceID باید مختص همین تراکنش برگشت و یکتا باشد.",
+      "fields": [
+        {
+          "name": "invoiceID",
+          "type": "string",
+          "req": "M",
+          "desc": "فاکتور یکتای تراکنش برگشت"
+        },
+        {
+          "name": "invoiceDate",
+          "type": "string",
+          "req": "O",
+          "desc": "تاریخ فاکتور برگشت"
+        },
+        {
+          "name": "amount",
+          "type": "integer",
+          "req": "O",
+          "desc": "مبلغ (ریال)؛ خالی = کل مبلغ اصلی"
+        },
+        {
+          "name": "originInvoiceID",
+          "type": "string",
+          "req": "M",
+          "desc": "فاکتور خرید اصلی"
+        },
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره ترمینال"
+        },
+        {
+          "name": "originUrlId",
+          "type": "string",
+          "req": "O",
+          "desc": "urlId خرید اصلی"
+        }
+      ],
+      "request": {
+        "amount": 20000,
+        "invoiceDate": "2025/08/30",
+        "invoiceID": "123",
+        "originInvoiceID": "123456",
+        "terminalNumber": 123456,
+        "originUrlId": "<urlId>"
+      },
+      "response": {
+        "resultCode": 0,
+        "resultMsg": "Successful"
+      }
+    },
+    {
+      "id": "provider-refund-pod",
+      "title": "برگشت از خرید با سرویس پاد",
+      "path": "/api/payment/refund-transactions-3rd-party",
+      "auth": "bearer",
+      "group": "provider-refund",
+      "summary": "مشابه provider-refund-toman با Provider پاد.",
+      "fields": [
+        {
+          "name": "invoiceID",
+          "type": "string",
+          "req": "M",
+          "desc": "فاکتور یکتای تراکنش برگشت"
+        },
+        {
+          "name": "invoiceDate",
+          "type": "string",
+          "req": "O",
+          "desc": "تاریخ فاکتور برگشت"
+        },
+        {
+          "name": "amount",
+          "type": "integer",
+          "req": "O",
+          "desc": "مبلغ (ریال)"
+        },
+        {
+          "name": "originInvoiceID",
+          "type": "string",
+          "req": "M",
+          "desc": "فاکتور خرید اصلی"
+        },
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره ترمینال"
+        },
+        {
+          "name": "originUrlId",
+          "type": "string",
+          "req": "O",
+          "desc": "urlId خرید اصلی"
+        }
+      ],
+      "request": {
+        "amount": 20000,
+        "invoiceID": "123",
+        "originInvoiceID": "123456",
+        "terminalNumber": 123456
+      },
+      "response": {
+        "resultCode": 0,
+        "resultMsg": "Successful"
+      }
+    },
+    {
+      "id": "settlement-tracking-toman",
+      "title": "جزئیات Refund با شماره فاکتور (toman)",
+      "path": "/api/third-party/provider/v1/settlement/tracking/toman",
+      "auth": "bearer",
+      "group": "provider-refund",
+      "summary": "دریافت وضعیت تسویه یک Refund با invoiceId (همان invoiceID درخواست Refund). result.status: -1 نامشخص، 0 ایجاد شده، 1 ناموفق، 2 در حال انجام، 3 موفق، 4 لغو کاربر، 5 منقضی، 6 عدم تایید کاربر، 8 خطا (حساب اشتباه).",
+      "fields": [
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره پایانه"
+        },
+        {
+          "name": "invoiceId",
+          "type": "string",
+          "req": "M",
+          "desc": "فاکتور تراکنش Refund"
+        }
+      ],
+      "request": {
+        "terminalNumber": 123453789,
+        "invoiceId": "123"
+      },
+      "response": {
+        "resultCode": 0,
+        "resultMsg": "Successful",
+        "status": 200,
+        "result": {
+          "uuid": "<uuid>",
+          "amount": 10000,
+          "status": 3,
+          "iban": "IR...",
+          "bank_follow_up_code": "...",
+          "tracker_id": "..."
+        }
+      }
+    },
+    {
+      "id": "settlement-tracking-pod",
+      "title": "جزئیات Refund پاد با شماره فاکتور",
+      "path": "/api/third-party/provider/v1/settlement/tracking",
+      "auth": "bearer",
+      "group": "provider-refund",
+      "summary": "مانند settlement-tracking-toman برای Provider پاد.",
+      "fields": [
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره پایانه"
+        },
+        {
+          "name": "invoiceId",
+          "type": "string",
+          "req": "M",
+          "desc": "فاکتور تراکنش Refund"
+        }
+      ],
+      "request": {
+        "terminalNumber": 123453789,
+        "invoiceId": "123"
+      },
+      "response": {
+        "resultCode": 0,
+        "resultMsg": "Successful",
+        "status": 200,
+        "result": {
+          "uuid": "<uuid>",
+          "status": 3
+        }
+      }
+    },
+    {
+      "id": "settlement-by-uuid-toman",
+      "title": "جزئیات Refund با UUID (toman)",
+      "path": "/api/third-party/provider/v1/settlement/toman",
+      "auth": "bearer",
+      "group": "provider-refund",
+      "summary": "دریافت جزئیات تسویه با settlementUUID. کدهای status مانند settlement-tracking.",
+      "fields": [
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره پایانه"
+        },
+        {
+          "name": "settlementUUID",
+          "type": "string",
+          "req": "M",
+          "desc": "UUID تسویه"
+        }
+      ],
+      "request": {
+        "terminalNumber": 123453789,
+        "settlementUUID": "<uuid>"
+      },
+      "response": {
+        "resultCode": 0,
+        "resultMsg": "Successful",
+        "status": 200,
+        "result": {
+          "uuid": "<uuid>",
+          "status": 3
+        }
+      }
+    },
+    {
+      "id": "settlements-list-toman",
+      "title": "لیست Refundها با بازه تاریخ (toman)",
+      "path": "/api/third-party/provider/v1/settlements/toman",
+      "auth": "bearer",
+      "group": "provider-refund",
+      "summary": "لیست صفحه‌بندی‌شده تسویه‌ها (۵۰ مورد در هر صفحه). توجه: کلید پیام در این پاسخ resultMessage است، نه resultMsg.",
+      "fields": [
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره پایانه"
+        },
+        {
+          "name": "create_after",
+          "type": "string",
+          "req": "O",
+          "desc": "شروع بازه — 2025-05-23 03:30:00.000000000"
+        },
+        {
+          "name": "create_before",
+          "type": "string",
+          "req": "O",
+          "desc": "پایان بازه"
+        },
+        {
+          "name": "page",
+          "type": "integer",
+          "req": "O",
+          "desc": "شماره صفحه"
+        },
+        {
+          "name": "invoiceId",
+          "type": "string",
+          "req": "M",
+          "desc": "فاکتور تراکنش برگشتی (طبق مستند اجباری)"
+        }
+      ],
+      "request": {
+        "terminalNumber": 123453789,
+        "create_after": "2025-05-23 03:30:00.000000000",
+        "create_before": "2025-05-25 03:30:00.000000000",
+        "page": 2,
+        "invoiceId": "123"
+      },
+      "response": {
+        "resultCode": 0,
+        "resultMessage": "Successful",
+        "totalCount": 146,
+        "pageNumber": 2,
+        "totalPages": 3,
+        "results": [
+          {
+            "uuid": "<uuid>",
+            "status": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "card-to-iban-toman",
+      "title": "تبدیل کارت به شبا (toman)",
+      "path": "/api/third-party/provider/v1/card-to-iban/toman",
+      "auth": "bearer",
+      "group": "provider-refund",
+      "summary": "تبدیل شماره کارت به شبا.",
+      "fields": [
+        {
+          "name": "cardNumber",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره کارت"
+        },
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره پایانه"
+        }
+      ],
+      "request": {
+        "cardNumber": "<PAN>",
+        "terminalNumber": 123453789
+      },
+      "response": {
+        "resultCode": 0,
+        "resultMsg": "Successful",
+        "iban": "IR..."
+      }
+    },
+    {
+      "id": "get-wallet-toman",
+      "title": "موجودی کیف پول (toman)",
+      "path": "/api/third-party/provider/v1/get-wallet/toman",
+      "auth": "bearer",
+      "group": "provider-refund",
+      "summary": "دریافت موجودی کیف پول Provider برای Refund (balance، minimum_balance، can_use_for_settlement).",
+      "fields": [
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره پایانه"
+        },
+        {
+          "name": "invoiceId",
+          "type": "string",
+          "req": "M",
+          "desc": "شماره فاکتور"
+        }
+      ],
+      "request": {
+        "terminalNumber": 123453789,
+        "invoiceId": "123"
+      },
+      "response": {
+        "resultCode": 0,
+        "resultMsg": "Successful",
+        "balance": 960000,
+        "balance_warning_threshold": 0,
+        "minimum_balance": 326400,
+        "withdraw_ratio": 0,
+        "address": "",
+        "can_use_for_settlement": false
+      }
+    },
+    {
+      "id": "authorization",
+      "title": "احراز هویت (قوی / بورسی)",
+      "path": "/api/payment/authorization",
+      "auth": "bearer",
+      "group": "auth",
+      "summary": "احراز هویت پس از خرید تایید‌شده. authorizationType=1 قوی (StrongAuth، mobileNumber اجباری) و 2 بورسی (CardInquiry، nationalCode رمزشده اجباری).",
+      "fields": [
+        {
+          "name": "invoiceID",
+          "type": "string",
+          "req": "M",
+          "desc": "فاکتور خرید تایید‌شده"
+        },
+        {
+          "name": "terminalNumber",
+          "type": "integer",
+          "req": "M",
+          "desc": "شماره ترمینال"
+        },
+        {
+          "name": "authorizationType",
+          "type": "integer",
+          "req": "M",
+          "desc": "1 = قوی، 2 = بورسی"
+        },
+        {
+          "name": "nationalCode",
+          "type": "string",
+          "req": "C",
+          "desc": "کد ملی رمزشده — برای نوع 2 اجباری"
+        },
+        {
+          "name": "mobileNumber",
+          "type": "string",
+          "req": "C",
+          "desc": "موبایل — برای نوع 1 اجباری"
+        }
+      ],
+      "request": {
+        "invoiceID": "654819",
+        "terminalNumber": 12345678,
+        "authorizationType": 1,
+        "mobileNumber": "09120000000"
+      },
+      "response": {
+        "resultMsg": "Successful",
+        "resultCode": 0
+      }
+    }
+  ],
+  "transactionStatus": [
+    {
+      "code": 0,
+      "meaning": "تراکنش موفق است (هنوز verify نشده)"
+    },
+    {
+      "code": 2,
+      "meaning": "وضعیت تراکنش نامشخص است"
+    },
+    {
+      "code": 13016,
+      "meaning": "تراکنش یافت نشد"
+    },
+    {
+      "code": 13025,
+      "meaning": "تراکنش ناموفق است"
+    },
+    {
+      "code": 13029,
+      "meaning": "تراکنش موفق و تایید (confirm) شده است"
+    },
+    {
+      "code": 13033,
+      "meaning": "تراکنش اصلاحیه (reverse) شده و وجه به دارنده کارت برگشته است"
+    },
+    {
+      "code": 13034,
+      "meaning": "وضعیت نامشخص ولی verify موفق دریافت شده؛ تاییدیه در زمان مقرر ایجاد می‌شود"
+    }
+  ],
+  "callbackStatus": [
+    {
+      "code": "success",
+      "meaning": "پرداخت موفق"
+    },
+    {
+      "code": "failed",
+      "meaning": "پرداخت ناموفق"
+    },
+    {
+      "code": "unknown",
+      "meaning": "نامشخص"
+    },
+    {
+      "code": "cancel",
+      "meaning": "لغو شده"
+    },
+    {
+      "code": "expire",
+      "meaning": "منقضی شده"
+    }
+  ],
+  "refundSettlementStatus": [
+    {
+      "code": -1,
+      "meaning": "نامشخص"
+    },
+    {
+      "code": 0,
+      "meaning": "ایجاد شده (تراکنش‌های دو مرحله‌ای)"
+    },
+    {
+      "code": 1,
+      "meaning": "ناموفق"
+    },
+    {
+      "code": 2,
+      "meaning": "در حال انجام"
+    },
+    {
+      "code": 3,
+      "meaning": "موفق"
+    },
+    {
+      "code": 4,
+      "meaning": "لغو شده توسط کاربر"
+    },
+    {
+      "code": 5,
+      "meaning": "منقضی شده"
+    },
+    {
+      "code": 6,
+      "meaning": "عدم تایید توسط کاربر"
+    },
+    {
+      "code": 8,
+      "meaning": "خطا در تراکنش (شماره حساب اشتباه)"
+    }
+  ],
+  "serviceCodes": [
+    {
+      "serviceCode": "1",
+      "serviceType": "MCI",
+      "title": "شارژ مستقیم همراه اول",
+      "endpoint": "pre-transaction"
+    },
+    {
+      "serviceCode": "2",
+      "serviceType": "MTN",
+      "title": "شارژ مستقیم ایرانسل",
+      "endpoint": "pre-transaction"
+    },
+    {
+      "serviceCode": "3",
+      "serviceType": "RTL",
+      "title": "شارژ مستقیم رایتل",
+      "endpoint": "pre-transaction"
+    },
+    {
+      "serviceCode": "4",
+      "serviceType": "BILL",
+      "title": "پرداخت قبض",
+      "endpoint": "pre-transaction"
+    },
+    {
+      "serviceCode": "5",
+      "serviceType": "MCI-PIN",
+      "title": "شارژ همراه اول (پین)",
+      "endpoint": "pre-transaction"
+    },
+    {
+      "serviceCode": "6",
+      "serviceType": "MTN-PIN",
+      "title": "شارژ ایرانسل (پین)",
+      "endpoint": "pre-transaction"
+    },
+    {
+      "serviceCode": "7",
+      "serviceType": "RTL-PIN",
+      "title": "شارژ رایتل (پین)",
+      "endpoint": "pre-transaction"
+    },
+    {
+      "serviceCode": "8",
+      "serviceType": "PURCHASE",
+      "title": "خرید / خرید شناسه‌دار",
+      "endpoint": "purchase"
+    },
+    {
+      "serviceCode": "9",
+      "serviceType": "MULTIACCPURCHASE",
+      "title": "خرید با تسهیم",
+      "endpoint": "multiacc-purchase"
+    }
+  ]
+}

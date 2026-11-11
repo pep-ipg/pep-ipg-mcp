@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "pep-ipg-mcp",
   "display_name": "PEP IPG MCP — درگاه پرداخت پاسارگاد",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "مستندات، قرارداد سرویس‌ها و کدهای خطای درگاه پرداخت اینترنتی پرداخت الکترونیک پاسارگاد (پروتکل Dorsa v28) برای پیاده‌سازی درگاه با کمک هوش مصنوعی.",
   "author": {
     "name": "Pasargad Electronic Payment Co.",

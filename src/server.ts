@@ -35,7 +35,7 @@ app.use("/mcp", (req: Request, res: Response, next: () => void) => {
 
 // Streamable HTTP, stateless: a fresh server + transport per request.
 app.post("/mcp", async (req: Request, res: Response) => {
-  const server = createMcpServer(corpus);
+  const server = createMcpServer(corpus, { sandbox: process.env.PEP_SANDBOX_ENABLE === "1" });
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     enableJsonResponse: true,

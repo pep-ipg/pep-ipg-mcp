@@ -1,10 +1,11 @@
 {
   "name": "pep-ipg-mcp",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "MCP server for the Pasargad Electronic Payment internet gateway (Dorsa protocol v28) — docs, endpoint contracts and error codes for AI coding assistants",
   "type": "module",
   "bin": {
-    "pep-ipg-mcp": "dist/stdio.js"
+    "pep-ipg-mcp": "dist/stdio.js",
+    "pep-ipg-sandbox": "dist/sandbox-cli.js"
   },
   "files": [
     "dist",
@@ -22,7 +23,8 @@
     "test": "tsx --test test/*.test.ts",
     "inspect": "npx @modelcontextprotocol/inspector node dist/stdio.js",
     "prepublishOnly": "npm run build && npm test",
-    "build:skill": "node scripts/build-skill.mjs"
+    "build:skill": "node scripts/build-skill.mjs",
+    "sandbox": "node dist/sandbox-cli.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.20.0",

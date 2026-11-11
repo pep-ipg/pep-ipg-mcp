@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0 — 1405/08/21
+- **شبیه‌ساز درگاه Dorsa v28**: getToken (JWT)، خرید، تسهیم، شارژ و قبض، صفحه پرداخت، callback، verify، confirm، reverse، استعلام و Refund، با ساعت مجازی و تزریق خطا
+- ابزارهای MCP: `sandbox_start`، `sandbox_pay`، `sandbox_status`، `sandbox_inject`، `sandbox_configure`، `sandbox_resolve`، `sandbox_reset`
+- ابزارهای `validate_request` و `next_action`
+- `data/endpoints.json`: قرارداد ساخت‌یافته سرویس‌ها
+- اجرای مستقل شبیه‌ساز: `pep-ipg-sandbox`
+
 ## 1.1.0 — 1405/08/20
 به‌روزرسانی به پروتکل Dorsa نسخه 28.0 (1405/08/12):
 - جدید: مستند «خرید شناسه‌دار با تسهیم» (`multiacc-payment-code`) و فیلد `paymentCode` در `multiacc-purchase` (v28)
