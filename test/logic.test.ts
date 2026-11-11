@@ -55,3 +55,10 @@ test("decision engine", () => {
     assert.equal(d.deliver, deliver, JSON.stringify(input));
   }
 });
+
+test("amount in Persian words", async () => {
+  const { toPersianWords } = await import("../src/sandbox/page.js");
+  assert.equal(toPersianWords(100000), "صد هزار");
+  assert.equal(toPersianWords(1250000), "یک میلیون و دویست و پنجاه هزار");
+  assert.equal(toPersianWords(15), "پانزده");
+});

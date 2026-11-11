@@ -44,6 +44,7 @@ export interface SandboxConfig {
   password: string;
   terminalNumber: number;
   merchantNumber: number;
+  merchantName: string;
   tokenTtlMin: number;
   pageTtlMin: number;
   verifyWindowMin: number;
@@ -67,6 +68,7 @@ export const DEFAULT_CONFIG: SandboxConfig = {
   password: "sandbox",
   terminalNumber: 1234567,
   merchantNumber: 7654321,
+  merchantName: "فروشگاه آزمایشی",
   tokenTtlMin: 10,
   pageTtlMin: 10,
   verifyWindowMin: 25,

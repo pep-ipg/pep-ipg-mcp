@@ -49,7 +49,12 @@ const purchaseBody = (invoice: string, extra: object = {}) => ({
 async function payViaPage(url: string, outcome: string) {
   const page = await fetch(url);
   assert.equal(page.status, 200);
-  assert.match(await page.text(), /محیط شبیه‌سازی/);
+  const html = await page.text();
+  assert.match(html, /شبیه‌ساز درگاه/);
+  // Safety: card inputs are disabled and unnamed; only the outcome is ever submitted.
+  const named = [...html.matchAll(/<(input|select|textarea)\b[^>]*\bname="([^"]+)"/g)].map((m) => m[2]);
+  assert.deepEqual(named.filter((n) => n !== "outcome"), []);
+  for (const tag of html.match(/<input\b[^>]*>/g) ?? []) assert.match(tag, /disabled|type="hidden"/);
   const res = await fetch(url, {
     method: "POST", redirect: "manual",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
