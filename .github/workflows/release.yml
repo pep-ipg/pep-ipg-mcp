@@ -1,0 +1,55 @@
+name: Release
+
+# Push a tag like v1.1.0 to publish:
+#   - npm package (npx pep-ipg-mcp)
+#   - Claude Desktop extension (.mcpb) attached to a GitHub Release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write   # create the GitHub Release
+  id-token: write   # npm provenance
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: Check tag matches package.json and manifest.json
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG=$(node -p "require('./package.json').version")
+          MAN=$(node -p "require('./manifest.json').version")
+          if [ "$TAG" != "$PKG" ] || [ "$TAG" != "$MAN" ]; then
+            echo "::error::tag v$TAG, package.json $PKG, manifest.json $MAN must match"
+            exit 1
+          fi
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+
+      - name: Publish to npm
+        if: ${{ env.NODE_AUTH_TOKEN != '' }}
+        run: npm publish --provenance --access public
+
+      - name: Build Claude Desktop extension (.mcpb)
+        run: |
+          npm prune --omit=dev
+          npx -y @anthropic-ai/mcpb pack . pep-ipg-mcp.mcpb
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: pep-ipg-mcp.mcpb
+          generate_release_notes: true

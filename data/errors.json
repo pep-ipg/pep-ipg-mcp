@@ -1,0 +1,1246 @@
+{
+  "0": {
+    "fa": "تراکنش موفق است.",
+    "en": "Successful",
+    "category": "transaction_status",
+    "retryable": false,
+    "hint": "فراخوانی موفق بوده است. در پاسخ استعالم، status=0 یعنی تراکنش موفق است ولی هنوز Verify نشده؛ verify را در مهلت مجاز فراخوانی کنید."
+  },
+  "1": {
+    "fa": "ناموفق.",
+    "en": "failure",
+    "category": "general",
+    "retryable": false,
+    "hint": "خطای عمومی. resultMsg را لاگ کنید و با استعالم (payment-inquiry) وضعیت قطعی را بگیرید."
+  },
+  "2": {
+    "fa": "وضعیت تراکنش نامشخص است.",
+    "en": "Transaction status is unknown",
+    "category": "transaction_status",
+    "retryable": true,
+    "hint": "وضعیت نامشخص است. خدمت را تحویل ندهید؛ با backoff مجدداً payment-inquiry با checkVerify=true بزنید تا وضعیت قطعی شود."
+  },
+  "401": {
+    "fa": "مجاز به استفاده از سرویس نیستید.",
+    "en": "Not authorized",
+    "category": "auth",
+    "retryable": false,
+    "hint": "توکن JWT نامعتبر یا منقضی است. مجدداً getToken بزنید و درخواست را یک‌بار تکرار کنید. (طبق مستند، اعتبار پیش‌فرض توکن ۱۰ دقیقه است.)"
+  },
+  "500": {
+    "fa": "خطا داخلی سرور.",
+    "en": "Internal server error",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13000": {
+    "fa": "ورودی نامعتبر است.",
+    "en": "Invalid Input",
+    "category": "request_validation",
+    "retryable": false,
+    "hint": "بدنه درخواست با قرارداد تطابق ندارد. فیلدهای اجباری، نوع داده (amount و terminalNumber عدد صحیح هستند) و JSON بودن بدنه را بررسی کنید. ابزار validate_request کمک می‌کند."
+  },
+  "13001": {
+    "fa": "توکن نامعتبر است.",
+    "en": "Malformed token",
+    "category": "auth",
+    "retryable": false
+  },
+  "13002": {
+    "fa": "توکن نامعتبر است.",
+    "en": "Invalid token",
+    "category": "auth",
+    "retryable": false
+  },
+  "13003": {
+    "fa": "کد رهگیری یکتا نیست.",
+    "en": "Invoice is not unique",
+    "category": "request_validation",
+    "retryable": false,
+    "hint": "invoice قبلاً استفاده شده است. برای هر درخواست خرید یک شماره فاکتور یکتا تولید کنید و در تلاش مجدد خرید، فاکتور جدید بسازید."
+  },
+  "13004": {
+    "fa": "توکن خالی است.",
+    "en": "Token is empty",
+    "category": "auth",
+    "retryable": false
+  },
+  "13005": {
+    "fa": "عدم امکان دسترسی موقت به سرور.",
+    "en": "Gateway time out",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13008": {
+    "fa": "توکن منقضی شده است.",
+    "en": "Token is expired",
+    "category": "auth",
+    "retryable": false,
+    "hint": "توکن منقضی شده؛ getToken مجدد. توکن را تا قبل از exp در کش نگه دارید و چند ثانیه زودتر تمدید کنید."
+  },
+  "13009": {
+    "fa": "توکن یافت نشد.",
+    "en": "Url token not found",
+    "category": "auth",
+    "retryable": false,
+    "hint": "urlId ارسالی یافت نشد. urlId باید همان مقدار data.urlId پاسخ purchase باشد (نه کل url)."
+  },
+  "13010": {
+    "fa": "شماره موبایل نامعتبر است.",
+    "en": "Invalid Mobile Number",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13011": {
+    "fa": "کد محصول نامعتبر است.",
+    "en": "Invalid product code",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13012": {
+    "fa": "شناسه قبض نامعتبر است.",
+    "en": "Invalid bill id",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13013": {
+    "fa": "شناسه پرداخت نامعتبر است.",
+    "en": "Invalid payment id",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13016": {
+    "fa": "تراکنش یافت نشد.",
+    "en": "Transaction not found",
+    "category": "transaction_status",
+    "retryable": false,
+    "hint": "تراکنشی با این مشخصات یافت نشد. invoice/urlId و ترمینال را بررسی کنید؛ اگر کاربر هرگز به صفحه پرداخت نرسیده، تراکنش را پرداخت‌نشده در نظر بگیرید."
+  },
+  "13018": {
+    "fa": "یافت نشد.",
+    "en": "Not found",
+    "category": "general",
+    "retryable": false
+  },
+  "13020": {
+    "fa": "خطا هنگام چک کردن کد شرکت.",
+    "en": "Check company code has exception",
+    "category": "general",
+    "retryable": false
+  },
+  "13025": {
+    "fa": "تراکنش ناموفق است.",
+    "en": "Transaction status is unsuccessful",
+    "category": "transaction_status",
+    "retryable": false,
+    "hint": "تراکنش ناموفق است. خدمت تحویل نشود؛ verify نزنید."
+  },
+  "13026": {
+    "fa": "شماره کارت نامعتبر است.",
+    "en": "Invalid Pan",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13027": {
+    "fa": "شماره موبایل برای شماره کارت وارد شده نیست.",
+    "en": "Mobile number and Pan are not match",
+    "category": "cardholder",
+    "retryable": false,
+    "hint": "شماره موبایل و کارت متعلق به یک نفر نیستند (احراز هویت قوی/شاهکار فعال است). به کاربر پیام شفاف بدهید که با کارت متعلق به خودش پرداخت کند."
+  },
+  "13028": {
+    "fa": "آدرس کالبک نامعتبر است.",
+    "en": "Callback domain is not valid",
+    "category": "request_validation",
+    "retryable": false,
+    "hint": "دامنه callbackApi با دامنه ثبت‌شده برای ترمینال یکی نیست. دامنه دقیق (با زیردامنه) را در پنل پذیرندگی ثبت/اصلاح کنید."
+  },
+  "13029": {
+    "fa": "تراکنش موفق و تایید شده است.",
+    "en": "Transaction status is confirmed",
+    "category": "transaction_status",
+    "retryable": false,
+    "hint": "تراکنش قبلاً تایید (confirm) شده است. برای فراخوانی تکراری confirm/verify این را موفق تلقی کنید (idempotent) و خدمت را — اگر قبلاً نداده‌اید — تحویل دهید."
+  },
+  "13030": {
+    "fa": "تراکنش تایید شده و ناموفق است.",
+    "en": "Transaction before is verified and its failed",
+    "category": "settlement_lifecycle",
+    "retryable": false,
+    "hint": "تراکنش قبلاً verify شده و نتیجه ناموفق بوده است. خدمت تحویل نشود."
+  },
+  "13031": {
+    "fa": "تراکنش منتظر تایید است.",
+    "en": "Transaction is not yet verified",
+    "category": "settlement_lifecycle",
+    "retryable": false,
+    "hint": "تراکنش هنوز verify نشده است. ابتدا verify-transactions یا verify-payment را فراخوانی کنید."
+  },
+  "13032": {
+    "fa": "کارت منقضی شده است.",
+    "en": "Expired card",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13033": {
+    "fa": "وضعیت تراکنش اصلاحیه است(بازگشت وجه به دارنده کارت با موفقیت انجام شده است).",
+    "en": "Transaction status is reversed",
+    "category": "transaction_status",
+    "retryable": false,
+    "hint": "تراکنش reverse شده و وجه به دارنده کارت برگشته است. خدمت تحویل نشود."
+  },
+  "13034": {
+    "fa": "وضعیت تراکنش در حال حاضر نامشخص است، اما Verify ارسال‌شده برای این تراکنش موفق بوده و در زمان مقرر تاییدیه برای آن ایجاد خواهد شد.",
+    "en": "A successful verify has been received for the desired transaction",
+    "category": "transaction_status",
+    "retryable": false,
+    "hint": "Verify موفق ثبت شده و تاییدیه در زمان مقرر ایجاد می‌شود؛ می‌توانید خدمت را تحویل دهید."
+  },
+  "13045": {
+    "fa": "دارنده کارت تراکنش را لغو کرد.",
+    "en": "Card holder canceled transaction",
+    "category": "cardholder",
+    "retryable": false,
+    "hint": "کاربر پرداخت را لغو کرده است. سفارش را لغو و سبد را برای تلاش مجدد با invoice جدید آماده کنید."
+  },
+  "13046": {
+    "fa": "تراکنش قبلاً تعیین تکلیف شده است.",
+    "en": "Already setteled",
+    "category": "settlement_lifecycle",
+    "retryable": false,
+    "hint": "تراکنش قبلاً تعیین تکلیف شده (confirm، verify یا reverse) و تغییر وضعیت مجدد ممکن نیست. وضعیت فعلی را با payment-inquiry بگیرید؛ اگر تایید شده و نیاز به بازگشت وجه است، از Refund استفاده کنید."
+  },
+  "13047": {
+    "fa": "پذیرنده کارت نامعتبر است.",
+    "en": "Invalid merchant",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13049": {
+    "fa": "تراکنش کامل نشده است.",
+    "en": "Incomplete transaction",
+    "category": "general",
+    "retryable": false
+  },
+  "13054": {
+    "fa": "تراکنش نامعتبر است.",
+    "en": "Invalid transaction",
+    "category": "general",
+    "retryable": false
+  },
+  "13055": {
+    "fa": "مبلغ تراکنش نامعتبر است.",
+    "en": "Invalid transaction amount",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13056": {
+    "fa": "صادرکننده کارت نامعتبر است.",
+    "en": "Invalid card issuer",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13057": {
+    "fa": "تاریخ کارت منقضی شده است.",
+    "en": "Expired card date",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13058": {
+    "fa": "کارت موقتاً مسدود شده است.",
+    "en": "Card is temporarily blocked",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13059": {
+    "fa": "حساب تعریف نشده است.",
+    "en": "Undefined account",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13060": {
+    "fa": "نوع تراکنش نامعتبر است.",
+    "en": "Invalid transaction type",
+    "category": "general",
+    "retryable": false
+  },
+  "13061": {
+    "fa": "شناسه انتقال نامعتبر است.",
+    "en": "Invalid transfer identifier",
+    "category": "general",
+    "retryable": false
+  },
+  "13062": {
+    "fa": "تراکنش تکراری.",
+    "en": "Duplicate transfer identifier",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13063": {
+    "fa": "مبلغ کافی نیست.",
+    "en": "Amount is not enough",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13064": {
+    "fa": "پین اشتباه است.",
+    "en": "Incorrect pin",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13065": {
+    "fa": "کارت نامعتبر است.",
+    "en": "No card record",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13066": {
+    "fa": "سرویس روی کارت مجاز نیست.",
+    "en": "Service not allowed on card",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13067": {
+    "fa": "کارت برای ترمینال مجاز نیست.",
+    "en": "Card not allowed on terminal",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13068": {
+    "fa": "مبلغ تراکنش بیش از حد مجاز است.",
+    "en": "Transaction amount over limit",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13069": {
+    "fa": "کارت محدود است.",
+    "en": "Restricted card",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13070": {
+    "fa": "خطای امنیتی.",
+    "en": "Security error",
+    "category": "general",
+    "retryable": false
+  },
+  "13071": {
+    "fa": "مبلغ تراکنش با قیمت نهایی مطابقت ندارد.",
+    "en": "Transaction amount is not match with final price",
+    "category": "request_validation",
+    "retryable": false,
+    "hint": "مبلغ تراکنش با قیمت نهایی مطابقت ندارد. amount ارسالی باید دقیقاً با مبلغ نهایی (به ریال) یکی باشد."
+  },
+  "13072": {
+    "fa": "درخواست تراکنش بیش از حد مجاز است.",
+    "en": "Transaction request is more than limit",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13073": {
+    "fa": "حساب غیر فعال است.",
+    "en": "Inactive account",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13074": {
+    "fa": "کارت توسط ترمینال مسدود شد.",
+    "en": "cardBlock by terminal",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13075": {
+    "fa": "زمان تأییدیه منقضی شده است.",
+    "en": "Confirm time expired",
+    "category": "settlement_lifecycle",
+    "retryable": false,
+    "hint": "مهلت confirm/verify تمام شده است. وضعیت را با payment-inquiry بگیرید؛ احتمالاً تراکنش به‌صورت خودکار برگشت خورده یا تایید شده است."
+  },
+  "13076": {
+    "fa": "زمان اصلاحیه منقضی شده است.",
+    "en": "Reverse time expire",
+    "category": "settlement_lifecycle",
+    "retryable": false,
+    "hint": "مهلت reverse تمام شده است (پیش‌فرض ۲۵ دقیقه یا طبق تنظیم ترمینال). برای بازگشت وجه از refund-transactions استفاده کنید."
+  },
+  "13077": {
+    "fa": "تراکنش اصلی نامعتبر است.",
+    "en": "Invalid original transaction",
+    "category": "settlement_lifecycle",
+    "retryable": false,
+    "hint": "تراکنش اصلی نامعتبر است. originInvoiceID/originUrlId یا invoice و urlId تراکنش اصلی را بررسی کنید."
+  },
+  "13078": {
+    "fa": "رمز کارت وارد گردد.",
+    "en": "Enter Card Pin",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13079": {
+    "fa": "روز کاری نامعتبر است.",
+    "en": "Invalid working day",
+    "category": "infrastructure",
+    "retryable": false
+  },
+  "13080": {
+    "fa": "کارت غیر فعال است.",
+    "en": "Inactive card",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13081": {
+    "fa": "حساب کارت نامعتبر است.",
+    "en": "Invalid card account",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13083": {
+    "fa": "داده های رمزگذاری شده نامعتبر است.",
+    "en": "Invalid encrypted data",
+    "category": "general",
+    "retryable": false
+  },
+  "13084": {
+    "fa": "سوئیچ یا شاپرک خاموش است.",
+    "en": "Switch or Shaparak signed Off",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13085": {
+    "fa": "میزبان بانک مقصد پایین است.",
+    "en": "Host down destination bank",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13086": {
+    "fa": "اطلاعات تاییدیه نامعتبر است.",
+    "en": "Invalid confirm data",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13087": {
+    "fa": "سوئیچ یا شاپرک در حال خاموش شدن است.",
+    "en": "Switch or shaparak signing off",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13088": {
+    "fa": "کلید رمزگذاری شده نامعتبر است.",
+    "en": "Invalid encrypted key",
+    "category": "general",
+    "retryable": false
+  },
+  "13089": {
+    "fa": "انجام تراکنش با واسط غیرتماسی مردود شده است(تراکنش با واسط تماسی انجام گردد).",
+    "en": "Banned transaction with contact interface",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13090": {
+    "fa": "پایان روز کاری.",
+    "en": "End work day",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13091": {
+    "fa": "سوئیچ غیر فعال است.",
+    "en": "Switch is inactive",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13092": {
+    "fa": "صادرکننده کارت نامعتبر.",
+    "en": "There is no way to send transaction",
+    "category": "infrastructure",
+    "retryable": false
+  },
+  "13093": {
+    "fa": "تراکنش موفقیت آمیز نیست.",
+    "en": "Transaction does not done success",
+    "category": "general",
+    "retryable": false
+  },
+  "13094": {
+    "fa": "تراکنش تکراری است.",
+    "en": "Duplicate transaction",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13095": {
+    "fa": "پین قدیمی اشتباه است.",
+    "en": "Incorrect old pin",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13096": {
+    "fa": "خطای داخلی سوئیچ.",
+    "en": "Systematic error",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13097": {
+    "fa": "در حال انجام فرآیند تغییر کلید.",
+    "en": "Key exchanging",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13098": {
+    "fa": "پین استاتیک فراتر از محدودیت.",
+    "en": "Static pin over limit",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13099": {
+    "fa": "پایانه فروش نامعتبر است.",
+    "en": "Invalid terminal",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13300": {
+    "fa": "پایانه در سیستم غیرفعال است.",
+    "en": "Terminal inActive",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13301": {
+    "fa": "فروشگاه در سیستم تعریف نشده است.",
+    "en": "Invalid Merchant",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13302": {
+    "fa": "فرمت کد ملی نامعتبر است.",
+    "en": "Invalid national code format",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13303": {
+    "fa": "پسورد ترمینال نامعتبر است.",
+    "en": "Invalid terminal password",
+    "category": "auth",
+    "retryable": false
+  },
+  "13304": {
+    "fa": "شناسه پرداخت نامعتبر است.",
+    "en": "Invalid bill paymentID",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13305": {
+    "fa": "داده های تراکنش ناکافی است.",
+    "en": "Insufficient transaction data",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13306": {
+    "fa": "کد شارژ نامعتبر است.",
+    "en": "Invalid evoucher code",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13307": {
+    "fa": "مهلت زمانی برای کارت یا پین به پایان رسیده است.",
+    "en": "Card or pin timeout",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13308": {
+    "fa": "اطلاعات حساب ناشناس است.",
+    "en": "Unrecognized account info",
+    "category": "general",
+    "retryable": false
+  },
+  "13310": {
+    "fa": "خطای دیگر.",
+    "en": "Other error",
+    "category": "general",
+    "retryable": false
+  },
+  "13311": {
+    "fa": "تمام شارژها فروخته شده.",
+    "en": "All charge sold",
+    "category": "infrastructure",
+    "retryable": false
+  },
+  "13312": {
+    "fa": "شارژ موجود نیست.",
+    "en": "Charge not available",
+    "category": "infrastructure",
+    "retryable": false
+  },
+  "13313": {
+    "fa": "اپراتور در دسترس نیست.",
+    "en": "Operator is not available",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13314": {
+    "fa": "شماره موبایل خالی است.",
+    "en": "Mobile number is null",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13315": {
+    "fa": "در رزرو فاکتور مشکلی وجود دارد.",
+    "en": "Topup reverse error",
+    "category": "general",
+    "retryable": false
+  },
+  "13316": {
+    "fa": "اصل تراکنش مالی موفق نمی‌باشد.",
+    "en": "Settlement transaction must be confirm or reverse",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13317": {
+    "fa": "کپچا اشتباه است.",
+    "en": "Captcha is wrong",
+    "category": "general",
+    "retryable": false
+  },
+  "13318": {
+    "fa": "کد سازمان ناموجود.",
+    "en": "Invalid company code",
+    "category": "general",
+    "retryable": false
+  },
+  "13319": {
+    "fa": "سیستم با اختلال همراه است.",
+    "en": "EOF",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13320": {
+    "fa": "کارت نامعتبر است.",
+    "en": "Card suspected fraud",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13321": {
+    "fa": "اطلاعات تکمیلی پایانه موجود نیست.",
+    "en": "Terminal additional not found",
+    "category": "general",
+    "retryable": false
+  },
+  "13322": {
+    "fa": "درخواست رمز پویا بیش از حد مجاز.",
+    "en": "OTP reached max retry",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13323": {
+    "fa": "عدم انطباق کد ملی با شماره کارت.",
+    "en": "Broker card inquiry failed",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13324": {
+    "fa": "اصل تراکنش مالی موفق نمی‌باشد.",
+    "en": "Original transaction was not success",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13325": {
+    "fa": "اصل تراکنش یافت نشد.",
+    "en": "Original transaction was not Found",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13326": {
+    "fa": "کارت مسدود است.",
+    "en": "Card blocked by machine",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13327": {
+    "fa": "کارت به دلایل ویژه مسدود شده است.",
+    "en": "Card blocked by machine for special condition",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13328": {
+    "fa": "موفق با احراز هویت دارنده کارت.",
+    "en": "Success with authentication card holder",
+    "category": "general",
+    "retryable": false,
+    "hint": "تراکنش با احراز هویت دارنده کارت موفق بوده است."
+  },
+  "13329": {
+    "fa": "سیستم مشغول است.",
+    "en": "Confirm will doing",
+    "category": "settlement_lifecycle",
+    "retryable": true
+  },
+  "13331": {
+    "fa": "کارمزد نامعتبر است.",
+    "en": "Invalid wage",
+    "category": "general",
+    "retryable": false
+  },
+  "13332": {
+    "fa": "PSP توسط شاپرک پشتیبانی نمی‌شود.",
+    "en": "PSP is not supported By shaparak",
+    "category": "general",
+    "retryable": false
+  },
+  "13333": {
+    "fa": "کارت نامعتبر است.",
+    "en": "Card suspected fraud card block by terminal",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13334": {
+    "fa": "ورود پین از حد مجاز گذشته است.",
+    "en": "Wrong entry pin is over limit",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13335": {
+    "fa": "کارت گمشده است.",
+    "en": "Response lost card",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13336": {
+    "fa": "کارت حساب عمومی ندارد.",
+    "en": "card has no Public account",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13337": {
+    "fa": "کارت سرقت شده است.",
+    "en": "Stolen card",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13338": {
+    "fa": "حساب تعریف نشده.",
+    "en": "Card has no current account",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13339": {
+    "fa": "پاسخ خیلی دیر دریافت شد.",
+    "en": "Response is too Late",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13340": {
+    "fa": "کارت یا حساب مبدا در وضعیت نامناسب می‌باشد.",
+    "en": "CardHolder Account Status Is Bad",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13341": {
+    "fa": "کارت یا حساب مقصد در وضعیت نامناسب می‌باشد.",
+    "en": "Terminal Account Status Is Bad",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13342": {
+    "fa": "ورود پین اشتباه بیش از حد مجاز است.",
+    "en": "card Wrong Pin Entry Is More Than Limit",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13343": {
+    "fa": "فروشگاه نامعتبر است.",
+    "en": "merchant is not valid",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13344": {
+    "fa": "خطای داخلی ثبت کارت.",
+    "en": "Card register error",
+    "category": "general",
+    "retryable": false
+  },
+  "13345": {
+    "fa": "شماره کارت تکراری است.",
+    "en": "Duplicate pan",
+    "category": "general",
+    "retryable": false
+  },
+  "13346": {
+    "fa": "فرمت شماره موبایل نامعتبر است.",
+    "en": "Invalid phone number",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13347": {
+    "fa": "فرمت شماره شناسنامه نامعتبر است.",
+    "en": "Invalid national code",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13348": {
+    "fa": "کد ملی یا سازمان تکراری است.",
+    "en": "Invalid national code or company code",
+    "category": "general",
+    "retryable": false
+  },
+  "13350": {
+    "fa": "خطای اعتبارسنجی.",
+    "en": "Validate request Error",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13351": {
+    "fa": "قالب شماره فاکتور معتبر نیست.",
+    "en": "Invoice format is not valid",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13352": {
+    "fa": "نام کاربری معتبر نیست.",
+    "en": "Username is not valid",
+    "category": "auth",
+    "retryable": false
+  },
+  "13353": {
+    "fa": "دسترسی اپراتور لغو شد.",
+    "en": "Operator access has been revoked",
+    "category": "general",
+    "retryable": false
+  },
+  "13354": {
+    "fa": "دسترسی سرویس لغو شده است.",
+    "en": "Service Access Has Been Revoked",
+    "category": "general",
+    "retryable": false
+  },
+  "13355": {
+    "fa": "اعتبار اپراتور کافی نیست.",
+    "en": "Operator credit is not sufficient",
+    "category": "infrastructure",
+    "retryable": false
+  },
+  "13356": {
+    "fa": "در رزرو فاکتور مشکلی وجود دارد.",
+    "en": "There is a problem in invoice reservation",
+    "category": "general",
+    "retryable": false
+  },
+  "13357": {
+    "fa": "اعتبار سرویس کافی نیست.",
+    "en": "Service credit is not sufficient",
+    "category": "infrastructure",
+    "retryable": false
+  },
+  "13358": {
+    "fa": "وضعیت تراکنش باید نامشخص باشد.",
+    "en": "Status transaction must be unknown",
+    "category": "settlement_lifecycle",
+    "retryable": false,
+    "hint": "این عملیات فقط روی تراکنش با وضعیت نامشخص مجاز است."
+  },
+  "13359": {
+    "fa": "پروتکل یافت نشد.",
+    "en": "Protocol type does not detected",
+    "category": "general",
+    "retryable": false
+  },
+  "13360": {
+    "fa": "تراکنش اصلی باید مالی باشد.",
+    "en": "Original transaction must be financial",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13361": {
+    "fa": "تراکنش تسویه ناموفق است.",
+    "en": "Settlement transaction failed",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13364": {
+    "fa": "نوع وصول آنی نامعتبر می باشد.",
+    "en": "Incorrect hot bill type",
+    "category": "general",
+    "retryable": false
+  },
+  "13365": {
+    "fa": "تراکنش پشتیبانی نمی شود.",
+    "en": "Not implemented transaction",
+    "category": "general",
+    "retryable": false
+  },
+  "13366": {
+    "fa": "توکن فعال نشده است.",
+    "en": "Err token is not active",
+    "category": "auth",
+    "retryable": false
+  },
+  "13367": {
+    "fa": "فرمت ورود نا معتبر.",
+    "en": "Err unexpected signing method",
+    "category": "auth",
+    "retryable": false
+  },
+  "13368": {
+    "fa": "خطای ورود.",
+    "en": "Err oauth login",
+    "category": "auth",
+    "retryable": false
+  },
+  "13369": {
+    "fa": "فرمت ورودی نا معتبر.",
+    "en": "Err Invalid Input",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13370": {
+    "fa": "خطای محدودیت در زمان.",
+    "en": "Err time frame exceeding limit",
+    "category": "general",
+    "retryable": false
+  },
+  "13371": {
+    "fa": "خطای دسترسی.",
+    "en": "Reporter permission error",
+    "category": "general",
+    "retryable": false
+  },
+  "13372": {
+    "fa": "خطای بازیابی آدرس.",
+    "en": "Dns error",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13373": {
+    "fa": "گروه ترمینال یافت نشد.",
+    "en": "Terminal group doesnt exist",
+    "category": "general",
+    "retryable": false
+  },
+  "13374": {
+    "fa": "خطای درخواست.",
+    "en": "Request error",
+    "category": "general",
+    "retryable": false
+  },
+  "13375": {
+    "fa": "شماره تلفن نا معتبر.",
+    "en": "Invalid phone number",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13376": {
+    "fa": "خطای اعتبار سنجی.",
+    "en": "Error evaluation",
+    "category": "general",
+    "retryable": false
+  },
+  "13377": {
+    "fa": "خطا در تراکنش.",
+    "en": "Error atomic operation",
+    "category": "general",
+    "retryable": false
+  },
+  "13378": {
+    "fa": "خطای پروتکل.",
+    "en": "Error protocol",
+    "category": "general",
+    "retryable": false
+  },
+  "13379": {
+    "fa": "پین بالک نا معتبر است.",
+    "en": "Response invalid pinBlock",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13380": {
+    "fa": "cvv2 نامعتبر است.",
+    "en": "Cvv2 is not valid",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13381": {
+    "fa": "فرمت نادرست شماره تماس.",
+    "en": "cellphone number is not supported",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13382": {
+    "fa": "خطا در نوع اصلاحیه.",
+    "en": "Invalid reverse mti",
+    "category": "general",
+    "retryable": false
+  },
+  "13383": {
+    "fa": "تراکنش تسویه شده است.",
+    "en": "Not found settlement action",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13384": {
+    "fa": "رمز اشتباه است.",
+    "en": "Response invalid encryptPin",
+    "category": "cardholder",
+    "retryable": false
+  },
+  "13385": {
+    "fa": "رکورد تکراری.",
+    "en": "Response duplicated record",
+    "category": "general",
+    "retryable": false
+  },
+  "13386": {
+    "fa": "خطا در انتقال.",
+    "en": "Publish error",
+    "category": "general",
+    "retryable": false
+  },
+  "13390": {
+    "fa": "خطا در تغییر سایز تصویر.",
+    "en": "Error image resize",
+    "category": "general",
+    "retryable": false
+  },
+  "13391": {
+    "fa": "خطا در پارامتر های ورودی.",
+    "en": "Response invalid sql parameter",
+    "category": "general",
+    "retryable": false
+  },
+  "13392": {
+    "fa": "خطا در درخواست رمزنگاری سخت افزاری.",
+    "en": "Hsm request error",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13393": {
+    "fa": "درخواستی یافت نشد.",
+    "en": "Request not found",
+    "category": "general",
+    "retryable": false
+  },
+  "13394": {
+    "fa": "خطا در فرمت ورودی.",
+    "en": "Error unmarshal",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13395": {
+    "fa": "تراکنش برگشت از خرید ناموفق است.",
+    "en": "Rejected refund",
+    "category": "settlement_lifecycle",
+    "retryable": false,
+    "hint": "درخواست برگشت از خرید رد شد. وضعیت تایید تراکنش اصلی، سقف مبلغ (کمتر یا مساوی مبلغ اصلی) و شماره کارت را بررسی کنید."
+  },
+  "13396": {
+    "fa": "خطا در سریال پایانه فروش.",
+    "en": "Invalid serial number",
+    "category": "general",
+    "retryable": false
+  },
+  "13397": {
+    "fa": "ورود مجدد تراکنش.",
+    "en": "ReEnter transaction",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13398": {
+    "fa": "درخواست کپچا بیش از حد مجاز است.",
+    "en": "Captcha Reached To Max Retry",
+    "category": "general",
+    "retryable": false
+  },
+  "13399": {
+    "fa": "ترمینال یافت نشد.",
+    "en": "Invalid Terminal Number",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13400": {
+    "fa": "کلید عمومی یافت نشد.",
+    "en": "Public Key Not Found",
+    "category": "general",
+    "retryable": false
+  },
+  "13401": {
+    "fa": "شارژ مورد نظر موجود نیست.",
+    "en": "Response Voucher Not Available",
+    "category": "infrastructure",
+    "retryable": false
+  },
+  "13402": {
+    "fa": "ارجاع دهنده با اطلاعات ثبت شده تطابق ندارد.",
+    "en": "Response Invalid Referer",
+    "category": "request_validation",
+    "retryable": false,
+    "hint": "Referer درخواست با آدرس‌های ثبت‌شده برای ترمینال مطابقت ندارد. Referrer-Policy صفحه را روی origin یا origin-when-cross-origin تنظیم کنید و دامنه را در پنل ثبت کنید. (no-referrer باعث این خطا می‌شود.)"
+  },
+  "13403": {
+    "fa": "شبا معتبر نیست.",
+    "en": "Invalid Merchant IBAN",
+    "category": "request_validation",
+    "retryable": false,
+    "hint": "شبای ذی‌نفع نامعتبر است. شبا را بدون پیشوند IR و به‌صورت ۲۴ رقم ارسال کنید."
+  },
+  "13404": {
+    "fa": "خطا در تغییر نوع متغییر.",
+    "en": "Failed Type Conversion",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13405": {
+    "fa": ")خطا(مقدار خالی.",
+    "en": "Empty Value",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13406": {
+    "fa": "عملیات به خطا خورد.",
+    "en": "Failed Operation",
+    "category": "general",
+    "retryable": false
+  },
+  "13407": {
+    "fa": "خطا در احراز هویت.",
+    "en": "Invalid Authentication",
+    "category": "auth",
+    "retryable": false
+  },
+  "13408": {
+    "fa": "کد سازمان یافت نشد.",
+    "en": "Invalid Organization",
+    "category": "general",
+    "retryable": false
+  },
+  "13409": {
+    "fa": "خطا در offset.",
+    "en": "Invalid Offset",
+    "category": "general",
+    "retryable": false
+  },
+  "13410": {
+    "fa": "خطا در سایز صفحه.",
+    "en": "Invalid Page size",
+    "category": "general",
+    "retryable": false
+  },
+  "13411": {
+    "fa": "خطا درهم سازی.",
+    "en": "Failed Hash",
+    "category": "general",
+    "retryable": false
+  },
+  "13412": {
+    "fa": "خطا در خواندن مقدار.",
+    "en": "Failed ParseField",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13413": {
+    "fa": "خطا در عملیات.",
+    "en": "InvalidAction",
+    "category": "general",
+    "retryable": false
+  },
+  "13414": {
+    "fa": "خطا در آپدیت.",
+    "en": "NoRowsWereUpdated",
+    "category": "general",
+    "retryable": false
+  },
+  "13415": {
+    "fa": "خطا در خرید شناسه دار.",
+    "en": "InvalidPurchaseIdentifier",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13416": {
+    "fa": "خطای چندشبایی.",
+    "en": "ResponseInvalidMultiPaymentData",
+    "category": "request_validation",
+    "retryable": false,
+    "hint": "داده‌های تسهیم نامعتبر است. تعداد sharedValue و sheba باید برابر و حداکثر ۱۰ باشد؛ جمع درصدها ۱۰۰ یا جمع مبالغ برابر amount باشد."
+  },
+  "13417": {
+    "fa": "عملیات مورد نظر پیاده سازی نشده است.",
+    "en": "NotImplemented",
+    "category": "general",
+    "retryable": false
+  },
+  "13418": {
+    "fa": "خطا در تاریخ درخواست.",
+    "en": "InvalidTransactionRequestTime",
+    "category": "request_validation",
+    "retryable": false
+  },
+  "13419": {
+    "fa": "خطا در زمان ورود.",
+    "en": "InvalidLogonTransactionTime",
+    "category": "general",
+    "retryable": false
+  },
+  "13420": {
+    "fa": "شماره مرجع نامعتبر.",
+    "en": "InvalidReference",
+    "category": "general",
+    "retryable": false
+  },
+  "13421": {
+    "fa": "تراکنش به اتمام رسید.",
+    "en": "TransactionIsComplete",
+    "category": "settlement_lifecycle",
+    "retryable": false
+  },
+  "13422": {
+    "fa": "آی پی پذیرنده معتبر نمی باشد.",
+    "en": "ResponseInvalidIP",
+    "category": "request_validation",
+    "retryable": false,
+    "hint": "IP سرور پذیرنده در لیست مجاز نیست. IP خروجی سرور (NAT/egress) را در پنل یا از طریق پشتیبانی ثبت کنید."
+  },
+  "13423": {
+    "fa": "تراکنش مجاز نیست.",
+    "en": "ResponseIllegalTransaction",
+    "category": "general",
+    "retryable": false
+  },
+  "13424": {
+    "fa": "پیام پرداخت یار مجاز نمی باشد.",
+    "en": "InvalidFacilitatorMessage",
+    "category": "general",
+    "retryable": false
+  },
+  "13425": {
+    "fa": "خطایی از طرف تامین کننده رخ داده است.",
+    "en": "ProviderError",
+    "category": "infrastructure",
+    "retryable": true
+  },
+  "13426": {
+    "fa": "وضعیت تراکنش تایید شده نیست.",
+    "en": "Transaction Status Must Be Confirmed",
+    "category": "settlement_lifecycle",
+    "retryable": false,
+    "hint": "وضعیت تراکنش اصلی تایید‌شده نیست؛ Refund و احراز هویت فقط روی تراکنش تایید‌شده مجازند."
+  },
+  "13427": {
+    "fa": "دسترسی غیر مجاز.",
+    "en": "Invalid Authorization",
+    "category": "auth",
+    "retryable": false
+  },
+  "13428": {
+    "fa": "درخواست تاییدیه قبال ارسال شده است.",
+    "en": "Already Verified",
+    "category": "settlement_lifecycle",
+    "retryable": false,
+    "hint": "verify قبلاً ارسال شده است (فقط وقتی checkVerify=true بفرستید برمی‌گردد). این پاسخ را idempotent و موفق تلقی کنید."
+  },
+  "13429": {
+    "fa": "احراز هویت موفق نبود.",
+    "en": "Authorization Failed",
+    "category": "auth",
+    "retryable": false
+  },
+  "13430": {
+    "fa": "احراز هویت موفق نبود؛ بعداً دوباره تلاش کنید.",
+    "en": "Authorization Failed, Try Again Later",
+    "category": "auth",
+    "retryable": false
+  }
+}

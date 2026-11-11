@@ -1,0 +1,16 @@
+src/
+test/
+*.ts
+*.map
+Dockerfile
+.dockerignore
+.gitignore
+tsconfig.json
+README.md
+*.mcpb
+.github/
+examples/
+CHANGELOG.md
+CONTRIBUTING.md
+SECURITY.md
+PUBLISHING.md
