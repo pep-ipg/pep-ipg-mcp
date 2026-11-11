@@ -4,24 +4,59 @@
   "display_name": "PEP IPG MCP — درگاه پرداخت پاسارگاد",
   "version": "1.1.0",
   "description": "مستندات، قرارداد سرویس‌ها و کدهای خطای درگاه پرداخت اینترنتی پرداخت الکترونیک پاسارگاد (پروتکل Dorsa v28) برای پیاده‌سازی درگاه با کمک هوش مصنوعی.",
-  "author": { "name": "Mehdi Faraji" },
+  "author": {
+    "name": "Pasargad Electronic Payment Co.",
+    "url": "https://github.com/pep-ipg"
+  },
   "server": {
     "type": "node",
     "entry_point": "dist/stdio.js",
     "mcp_config": {
       "command": "node",
-      "args": ["${__dirname}/dist/stdio.js"]
+      "args": [
+        "${__dirname}/dist/stdio.js"
+      ]
     }
   },
   "tools": [
-    { "name": "search_docs", "description": "جستجو در مستندات درگاه پاسارگاد" },
-    { "name": "get_doc", "description": "متن کامل یک سرویس یا راهنما" },
-    { "name": "get_error_code", "description": "تحلیل ۲۰۲ کد خطا و وضعیت" },
-    { "name": "get_auth_flow", "description": "راهنمای احراز هویت JWT و کلاینت توکن" }
+    {
+      "name": "search_docs",
+      "description": "جستجو در مستندات درگاه پاسارگاد"
+    },
+    {
+      "name": "get_doc",
+      "description": "متن کامل یک سرویس یا راهنما"
+    },
+    {
+      "name": "get_error_code",
+      "description": "تحلیل ۲۰۲ کد خطا و وضعیت"
+    },
+    {
+      "name": "get_auth_flow",
+      "description": "راهنمای احراز هویت JWT و کلاینت توکن"
+    }
   ],
-  "keywords": ["pasargad", "pep", "ipg", "payment", "dorsa", "درگاه پرداخت"],
+  "keywords": [
+    "pasargad",
+    "pep",
+    "ipg",
+    "payment",
+    "dorsa",
+    "درگاه پرداخت"
+  ],
   "compatibility": {
-    "platforms": ["darwin", "win32", "linux"],
-    "runtimes": { "node": ">=18.0.0" }
-  }
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pep-ipg/pep-ipg-mcp"
+  },
+  "homepage": "https://github.com/pep-ipg/pep-ipg-mcp"
 }

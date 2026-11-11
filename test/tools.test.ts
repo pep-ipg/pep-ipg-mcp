@@ -50,3 +50,12 @@ test("v28 updates", () => {
   assert.match(getErrorCode(corpus, 13046), /تعیین تکلیف/);
   assert.ok(searchDocs(corpus, "خرید شناسه دار با تسهیم", 3).some((h) => h.docId === "multiacc-payment-code"));
 });
+
+test("optional bearer auth", async () => {
+  const { isAuthorized } = await import("../src/auth.js");
+  assert.equal(isAuthorized(undefined, undefined), true);
+  assert.equal(isAuthorized(undefined, "s3cret"), false);
+  assert.equal(isAuthorized("Bearer wrong", "s3cret"), false);
+  assert.equal(isAuthorized("Bearer s3cret", "s3cret"), true);
+  assert.equal(isAuthorized("bearer  s3cret ", "s3cret"), true);
+});

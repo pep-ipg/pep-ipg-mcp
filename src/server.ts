@@ -1,5 +1,6 @@
 import express, { type Request, type Response } from "express";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { isAuthorized } from "./auth.js";
 import { createMcpServer, VERSION } from "./mcp.js";
 import { loadCorpus } from "./tools.js";
 
@@ -18,6 +19,17 @@ app.get("/health", (_req: Request, res: Response) => {
     startedAt,
     docs: corpus.docs.size,
     errorCodes: Object.keys(corpus.errors).length,
+  });
+});
+
+// Optional shared token for team deployments: set PEP_MCP_AUTH_TOKEN.
+const AUTH_TOKEN = process.env.PEP_MCP_AUTH_TOKEN?.trim() || undefined;
+app.use("/mcp", (req: Request, res: Response, next: () => void) => {
+  if (isAuthorized(req.headers.authorization, AUTH_TOKEN)) return next();
+  res.status(401).set("WWW-Authenticate", "Bearer").json({
+    jsonrpc: "2.0",
+    error: { code: -32001, message: "Unauthorized" },
+    id: null,
   });
 });
 
@@ -57,7 +69,9 @@ app.delete("/mcp", methodNotAllowed);
 const PORT = Number(process.env.PORT ?? 3000);
 const HOST = process.env.HOST ?? "0.0.0.0";
 const httpServer = app.listen(PORT, HOST, () => {
-  console.log(`PEP IPG MCP v${VERSION} on http://${HOST}:${PORT}/mcp (${corpus.docs.size} docs)`);
+  console.log(
+    `PEP IPG MCP v${VERSION} on http://${HOST}:${PORT}/mcp (${corpus.docs.size} docs, auth ${AUTH_TOKEN ? "on" : "off"})`,
+  );
 });
 
 for (const sig of ["SIGINT", "SIGTERM"] as const) {

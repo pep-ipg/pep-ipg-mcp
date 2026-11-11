@@ -4,7 +4,7 @@
 
 **سرور MCP درگاه پرداخت اینترنتی پرداخت الکترونیک پاسارگاد (PEP)** — دستیار هوش مصنوعی خود را مستقیماً به مستندات درگاه وصل کنید.
 
-[![CI](https://github.com/mahdifj/pep-ipg-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/mahdifj/pep-ipg-mcp/actions/workflows/ci.yml)
+[![CI](https://github.com/pep-ipg/pep-ipg-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/pep-ipg/pep-ipg-mcp/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-Streamable%20HTTP%20%7C%20stdio-black)](https://modelcontextprotocol.io)
 ![Protocol](https://img.shields.io/badge/Dorsa%20Protocol-v28.0-0a7)
@@ -62,7 +62,7 @@ claude mcp list   # بررسی اتصال
 
 ### Claude Desktop
 
-**روش یک‌کلیکی:** فایل [`pep-ipg-mcp.mcpb`](https://github.com/mahdifj/pep-ipg-mcp/releases/latest/download/pep-ipg-mcp.mcpb) را دانلود کنید و روی آن دابل‌کلیک کنید. سپس در پنجره بازشده **Install** را بزنید.
+**روش یک‌کلیکی:** فایل [`pep-ipg-mcp.mcpb`](https://github.com/pep-ipg/pep-ipg-mcp/releases/latest/download/pep-ipg-mcp.mcpb) را دانلود کنید و روی آن دابل‌کلیک کنید. سپس در پنجره بازشده **Install** را بزنید.
 
 **روش دستی:** در `Settings → Developer → Edit Config`:
 
@@ -114,24 +114,118 @@ claude mcp list   # بررسی اتصال
 
 ### نسخه HTTP (سرور تیمی یا دیپلوی)
 
+روش‌های بالا (`npx` و `.mcpb`) سرور را **روی سیستم هر کاربر** اجرا می‌کنند. نسخه HTTP برعکس است: سرور **یک‌بار روی یک ماشین** اجرا می‌شود و همه با یک آدرس به آن وصل می‌شوند، مثل سرویس MCP زرین‌پال.
+
+| | محلی (`npx` / `.mcpb`) | HTTP (سرور مشترک) |
+|---|---|---|
+| نصب برای کاربر | هر کاربر جداگانه | فقط یک آدرس |
+| به‌روزرسانی مستندات | هر کاربر باید آپدیت کند | یک‌بار روی سرور، همه فوراً می‌گیرند |
+| نیاز به Node.js روی سیستم کاربر | بله (به‌جز `.mcpb`) | خیر |
+| مناسب برای | توسعه‌دهنده تکی | تیم داخلی، پذیرندگان، سرویس عمومی |
+| استفاده در claude.ai (وب و موبایل) | ❌ | ✅ با آدرس عمومی HTTPS |
+
+#### ۱. اجرای سریع (تست)
+
 ```bash
-git clone https://github.com/mahdifj/pep-ipg-mcp.git && cd pep-ipg-mcp
-npm install && npm run build && npm start      # http://localhost:3000/mcp
-# یا با Docker:
-docker build -t pep-ipg-mcp . && docker run -p 3000:3000 pep-ipg-mcp
+git clone https://github.com/pep-ipg/pep-ipg-mcp.git && cd pep-ipg-mcp
+npm install && npm run build
+npm start                                   # http://localhost:3000/mcp
+curl http://localhost:3000/health           # {"status":"ok", ...}
 ```
 
-هر ابزاری که از **Streamable HTTP** پشتیبانی کند، با آدرس `https://YOUR-HOST/mcp` کار می‌کند:
+#### ۲. دیپلوی روی سرور
 
+**با Docker Compose (پیشنهادی):**
 ```bash
-claude mcp add --transport http pep https://YOUR-HOST/mcp
+git clone https://github.com/pep-ipg/pep-ipg-mcp.git && cd pep-ipg-mcp
+export PEP_MCP_AUTH_TOKEN=$(openssl rand -hex 32)    # اختیاری؛ برای سرور تیمی توصیه می‌شود
+docker compose up -d --build
 ```
+سرور روی `127.0.0.1:3000` بالا می‌آید و از بیرون فقط از طریق reverse proxy در دسترس است.
+
+**بدون Docker:** فایل آماده systemd در [`deploy/pep-ipg-mcp.service`](deploy/pep-ipg-mcp.service).
+
+**PaaS (Render، Railway، Fly.io، لیارا):** همین مخزن را با Dockerfile موجود دیپلوی کنید. Health check: `/health`.
+
+#### ۳. HTTPS
+
+کلاینت‌ها، به‌ویژه claude.ai، فقط به آدرس **HTTPS** وصل می‌شوند. نمونه آماده Nginx + Let's Encrypt در [`deploy/nginx.conf`](deploy/nginx.conf). در نهایت آدرس سرویس می‌شود:
+
+```
+https://mcp.example.ir/mcp
+```
+
+#### ۴. محدود کردن دسترسی (توکن)
+
+اگر `PEP_MCP_AUTH_TOKEN` تنظیم شود، هر درخواست به `/mcp` باید هدر زیر را داشته باشد؛ در غیر این صورت پاسخ `401` می‌گیرد:
+
+```
+Authorization: Bearer <PEP_MCP_AUTH_TOKEN>
+```
+
+- **سرور تیمی یا داخلی:** توکن را تنظیم کنید و فقط به اعضای تیم بدهید.
+- **سرویس عمومی (مثل زرین‌پال):** توکن را خالی بگذارید.
+- `/health` همیشه بدون توکن در دسترس است.
+
+#### ۵. اتصال کلاینت‌ها به سرور
+
+**Claude Code**
+```bash
+claude mcp add --transport http pep https://mcp.example.ir/mcp
+# با توکن:
+claude mcp add --transport http pep https://mcp.example.ir/mcp --header "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Cursor** (`~/.cursor/mcp.json`)
+```json
+{
+  "mcpServers": {
+    "pep": {
+      "url": "https://mcp.example.ir/mcp",
+      "headers": { "Authorization": "Bearer YOUR_TOKEN" }
+    }
+  }
+}
+```
+
+**VS Code** (`.vscode/mcp.json`)
+```json
+{
+  "servers": {
+    "pep": {
+      "type": "http",
+      "url": "https://mcp.example.ir/mcp",
+      "headers": { "Authorization": "Bearer YOUR_TOKEN" }
+    }
+  }
+}
+```
+(بدون توکن، خط `headers` را حذف کنید.)
+
+**claude.ai و Claude Desktop (Connector)**
+`Settings → Connectors → Add custom connector` و آدرس `https://mcp.example.ir/mcp`. Connector از همه دستگاه‌ها (وب، موبایل، دسکتاپ) کار می‌کند. این روش هدر توکن ثابت را پشتیبانی نمی‌کند، پس برای آن سرور را بدون توکن اجرا کنید.
+
+#### متغیرهای محیطی
 
 | متغیر | پیش‌فرض | توضیح |
 |---|---|---|
 | `PORT` | `3000` | پورت HTTP |
-| `HOST` | `0.0.0.0` | برای استفاده فقط محلی `127.0.0.1` |
-| `PEP_MCP_DATA_DIR` | `./data` | مسیر دلخواه مستندات |
+| `HOST` | `0.0.0.0` | پشت reverse proxy یا برای استفاده محلی: `127.0.0.1` |
+| `PEP_MCP_AUTH_TOKEN` | خالی (بدون احراز هویت) | توکن Bearer برای محدود کردن دسترسی به `/mcp` |
+| `PEP_MCP_DATA_DIR` | `./data` | مسیر دلخواه مستندات (مثلاً نسخه داخلی) |
+
+#### بررسی سلامت سرور
+
+```bash
+curl https://mcp.example.ir/health
+curl -X POST https://mcp.example.ir/mcp \
+  -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+پاسخ دوم باید فهرست ۴ ابزار را برگرداند.
+
+**به‌روزرسانی سرور:** `git pull && docker compose up -d --build`
 
 ---
 
@@ -153,7 +247,8 @@ claude mcp add --transport http pep https://YOUR-HOST/mcp
 | مشکل | راه‌حل |
 |---|---|
 | سرور در فهرست ابزارها نیست | `claude mcp list` را بزنید؛ `npx -y pep-ipg-mcp` را یک‌بار در ترمینال اجرا کنید تا خطای احتمالی دیده شود |
-| نسخه HTTP جواب نمی‌دهد | `GET /health` باید `{"status":"ok"}` برگرداند |
+| نسخه HTTP جواب نمی‌دهد | `GET /health` باید `{"status":"ok"}` برگرداند؛ اگر این جواب داد ولی `/mcp` نه، تنظیمات reverse proxy را بررسی کنید |
+| خطای `401 Unauthorized` | `PEP_MCP_AUTH_TOKEN` روی سرور تنظیم شده؛ هدر `Authorization: Bearer ...` را در کلاینت اضافه کنید |
 | `spawn npx ENOENT` در Claude Desktop | از روش یک‌کلیکی (`.mcpb`) استفاده کنید، یا مسیر کامل خروجی `which npx` را به‌جای `npx` بگذارید |
 | `npx` در ایران کند است یا خطا می‌دهد | registry را عوض کنید یا از روش `.mcpb` استفاده کنید که اینترنت لازم ندارد |
 | دستیار از ابزار استفاده نمی‌کند | صریح بگویید: «با ابزار pep بررسی کن» |
@@ -166,18 +261,21 @@ data/
   errors.json      جدول کامل کدهای خطا
 src/
   server.ts        Express + Streamable HTTP (stateless) + /health
+  auth.ts          احراز هویت اختیاری با توکن Bearer
   stdio.ts         اجرای محلی
   mcp.ts           تعریف ابزارها (SDK رسمی MCP)
   tools.ts         منطق ابزارها، مستقل از SDK و قابل تست
   types.ts
 test/              تست‌ها (node:test)
 manifest.json      پیکربندی افزونه Claude Desktop (.mcpb)
+docker-compose.yml اجرای سرور HTTP با Docker
+deploy/            نمونه Nginx (HTTPS) و systemd
 ```
 
 ## توسعه
 
 ```bash
-git clone https://github.com/mahdifj/pep-ipg-mcp.git && cd pep-ipg-mcp
+git clone https://github.com/pep-ipg/pep-ipg-mcp.git && cd pep-ipg-mcp
 npm install
 npm run dev        # hot reload
 npm test

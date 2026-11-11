@@ -2,24 +2,31 @@
 
 ## یک‌بار: راه‌اندازی
 
-### ۱. جایگزینی نام کاربری GitHub
-```bash
-grep -rl "OWNER" README.md package.json | xargs sed -i '' 's/OWNER/YOUR_GITHUB_USERNAME/g'
-```
-(در Linux به‌جای `sed -i ''` بنویسید `sed -i`.)
+### ۱. مخزن در اکانت شرکت (`pep-ipg`)
+همه لینک‌های README، `package.json` و `manifest.json` به `github.com/pep-ipg/pep-ipg-mcp` اشاره می‌کنند.
 
-### ۲. ساخت مخزن و push
-مخزن خالی `pep-ipg-mcp` را در GitHub بسازید (بدون README و LICENSE)، سپس:
+**اگر مخزن قبلاً در اکانت شخصی ساخته شده:**
+`Settings → General → Danger Zone → Transfer ownership` → مقصد `pep-ipg`. GitHub لینک‌های قدیمی را خودکار به آدرس جدید redirect می‌کند. سپس روی سیستم خود:
+```bash
+git remote set-url origin https://github.com/pep-ipg/pep-ipg-mcp.git
+git pull
+```
+
+**اگر مخزن جدید است:** در اکانت `pep-ipg` مخزن خالی `pep-ipg-mcp` بسازید (بدون README و LICENSE)، سپس:
 ```bash
 npm install                       # ساخت package-lock.json (CI به آن نیاز دارد)
 git init
 git add .
 git commit -m "PEP IPG MCP v1.1.0 (Dorsa v28)"
 git branch -M main
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/pep-ipg-mcp.git
+git remote add origin https://github.com/pep-ipg/pep-ipg-mcp.git
 git push -u origin main
 ```
-در تب **Actions** باید CI سبز شود.
+
+### ۲. تنظیمات مخزن
+- **Settings → Actions → General → Workflow permissions:** «Read and write permissions» (برای ساخت Release)
+- **About** (چرخ‌دنده کنار About در صفحه اصلی): توضیح کوتاه + topics: `mcp`, `model-context-protocol`, `payment-gateway`, `iran`, `pasargad`
+- در تب **Actions** باید CI سبز شود.
 
 ### ۳. npm (برای نصب با `npx`)
 1. در [npmjs.com](https://www.npmjs.com) حساب بسازید و 2FA را فعال کنید.

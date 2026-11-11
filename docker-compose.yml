@@ -1,0 +1,16 @@
+services:
+  pep-ipg-mcp:
+    build: .
+    image: pep-ipg-mcp:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"   # only reachable via the reverse proxy on this host
+    environment:
+      PORT: "3000"
+      HOST: "0.0.0.0"
+      PEP_MCP_AUTH_TOKEN: "${PEP_MCP_AUTH_TOKEN:-}"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

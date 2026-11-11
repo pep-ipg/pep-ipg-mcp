@@ -14,3 +14,5 @@ CHANGELOG.md
 CONTRIBUTING.md
 SECURITY.md
 PUBLISHING.md
+docker-compose.yml
+deploy/

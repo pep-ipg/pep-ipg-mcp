@@ -1,0 +1,24 @@
+# systemd unit for running without Docker.
+# Install:  sudo cp deploy/pep-ipg-mcp.service /etc/systemd/system/
+#           sudo systemctl daemon-reload && sudo systemctl enable --now pep-ipg-mcp
+[Unit]
+Description=PEP IPG MCP server
+After=network.target
+
+[Service]
+Type=simple
+User=pepmcp
+WorkingDirectory=/opt/pep-ipg-mcp
+ExecStart=/usr/bin/node dist/server.js
+Environment=PORT=3000
+Environment=HOST=127.0.0.1
+EnvironmentFile=-/etc/pep-ipg-mcp.env
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -4,6 +4,7 @@
 به‌روزرسانی به پروتکل Dorsa نسخه 28.0 (1405/08/12):
 - جدید: مستند «خرید شناسه‌دار با تسهیم» (`multiacc-payment-code`) و فیلد `paymentCode` در `multiacc-purchase` (v28)
 - فیلد `localization` (`fa` / `en`) در سرویس خرید (v27)
+- احراز هویت اختیاری HTTP با `PEP_MCP_AUTH_TOKEN`؛ فایل‌های دیپلوی (`docker-compose.yml`، Nginx، systemd)
 - متن فارسی کد خطای 13046: «تراکنش قبلاً تعیین تکلیف شده است» (v26)
 
 ## 1.0.0 — 1405/08/20
