@@ -225,3 +225,19 @@ test("split payment, pre-transaction bill, referer strict", async () => {
   assert.equal((await fetch(p.data.url, { headers: { Referer: merchantUrl } })).status, 200);
   sb.store.config.refererCheck = "off";
 });
+
+test("publicUrl is used for payment page links", async () => {
+  const { startSandbox } = await import("../src/sandbox/server.js");
+  const s2 = await startSandbox({ port: 0, publicUrl: "https://pep-sandbox.staging.example.ir/" });
+  try {
+    assert.equal(s2.baseUrl, "https://pep-sandbox.staging.example.ir");
+    const tok = await (await fetch(`${s2.listenUrl}/token/getToken`, { method: "POST", body: JSON.stringify({ username: "sandbox", password: "sandbox" }) })).json() as any;
+    const p = await (await fetch(`${s2.listenUrl}/api/payment/purchase`, {
+      method: "POST", headers: { Authorization: `Bearer ${tok.token}` },
+      body: JSON.stringify(purchaseBody("PUB1")),
+    })).json() as any;
+    assert.ok(p.data.url.startsWith("https://pep-sandbox.staging.example.ir/pay/"), p.data.url);
+  } finally {
+    await s2.close();
+  }
+});

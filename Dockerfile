@@ -14,6 +14,6 @@ COPY --from=build /app/dist ./dist
 COPY package.json ./
 COPY data ./data
 USER node
-EXPOSE 3000
+EXPOSE 3000 8787
 HEALTHCHECK CMD wget -qO- http://127.0.0.1:3000/health || exit 1
 CMD ["node", "dist/server.js"]

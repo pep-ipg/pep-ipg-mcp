@@ -5,7 +5,8 @@
 - ابزارهای MCP: `sandbox_start`، `sandbox_pay`، `sandbox_status`، `sandbox_inject`، `sandbox_configure`، `sandbox_resolve`، `sandbox_reset`
 - ابزارهای `validate_request` و `next_action`
 - `data/endpoints.json`: قرارداد ساخت‌یافته سرویس‌ها
-- اجرای مستقل شبیه‌ساز: `pep-ipg-sandbox`
+- اجرای مستقل شبیه‌ساز: `pep-ipg-sandbox` (با `--public-url` برای Docker و سرور تست تیمی)
+- راهنمای محیط‌های توسعه، staging و CI: `docs/sandbox.md`
 
 ## 1.1.0 — 1405/08/20
 به‌روزرسانی به پروتکل Dorsa نسخه 28.0 (1405/08/12):

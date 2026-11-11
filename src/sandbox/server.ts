@@ -14,11 +14,16 @@ import { inquiryStatus, SandboxStore, type Outcome, type SandboxConfig, type Tra
 export interface SandboxOptions {
   port?: number;      // default 8787; 0 = random free port
   host?: string;      // default 127.0.0.1
+  /** URL browsers use to reach the sandbox (payment page links). Needed behind Docker, a proxy or on a shared test server. */
+  publicUrl?: string;
   config?: Partial<SandboxConfig>;
 }
 
 export interface Sandbox {
+  /** URL given to merchants and browsers (publicUrl when set). */
   baseUrl: string;
+  /** Address the server actually listens on. */
+  listenUrl: string;
   store: SandboxStore;
   close(): Promise<void>;
 }
@@ -368,10 +373,14 @@ export async function startSandbox(opts: SandboxOptions = {}): Promise<Sandbox> 
     server.listen(opts.port ?? 8787, host, () => resolve());
   });
   const addr = server.address() as AddressInfo;
-  baseUrl = `http://${host === "0.0.0.0" ? "127.0.0.1" : host}:${addr.port}`;
+  const listenUrl = `http://${host === "0.0.0.0" ? "127.0.0.1" : host}:${addr.port}`;
+  baseUrl = opts.publicUrl
+    ? opts.publicUrl.replace(/\/+$/, "")
+    : `http://${host === "0.0.0.0" ? "127.0.0.1" : host}:${addr.port}`;
 
   return {
     baseUrl,
+    listenUrl,
     store,
     close: () => new Promise<void>((resolve) => { server.closeAllConnections?.(); server.close(() => resolve()); }),
   };
