@@ -122,7 +122,7 @@ curl -s -o /dev/null -w '%{redirect_url}\n' -X POST "$PAYMENT_URL" -d 'outcome=s
 |---|---|---|
 | پرداخت موفق | دکمه «پرداخت موفق» | verify، تطبیق مبلغ، سپس تحویل |
 | انصراف یا ناموفق | دکمه «انصراف» یا «ناموفق» | تحویل نده و verify نزن |
-| وضعیت نامشخص | دکمه «وضعیت نامشخص»، بعد `sandbox_resolve` | تحویل نده؛ با استعلام تعیین تکلیف کن |
+| وضعیت نامشخص | `sandbox_pay` با `outcome: unknown`، بعد `sandbox_resolve` | تحویل نده؛ با استعلام تعیین تکلیف کن |
 | verify انجام شد ولی پاسخ نرسید | `sandbox_inject` با `applied_then_error` روی `verify-payment` | تکرار verify، و فقط یک‌بار تحویل |
 | verify نزدن | `sandbox_configure` با جلو بردن ساعت ۳۰ دقیقه | استعلام 13033 و پول برگشت خورده |
 | شکست تحویل بعد از verify | verify، سپس reverse | reverse در مهلت، و Refund بعد از آن |

@@ -13,16 +13,6 @@
 
 ---
 
-
-مدل‌های زبانی مستندات درگاه‌های ایرانی را یا ندیده‌اند یا نسخه قدیمی آن را دیده‌اند. نتیجه:
-
-- پیشنهاد **امضای RSA/XML** درگاه قدیمی، درحالی‌که Dorsa با **JWT Bearer** کار می‌کند
-- ارسال `amount` به‌صورت رشته یا تومان، فرستادن کل `url` به‌جای `urlId`
-- تحویل خدمت بر اساس `status=success` در callback بدون verify سمت سرور
-- تفسیر اشتباه کدهایی مثل `13029`، `13402` یا `13428`
-
-این سرور همین شکاف را پر می‌کند.
-
 ## ابزارها
 
 | ابزار | کاربرد |
@@ -243,31 +233,6 @@ PEP_BASE_URL=http://127.0.0.1:8787   PEP_USERNAME=sandbox   PEP_PASSWORD=sandbox
 | `spawn npx ENOENT` در Claude Desktop | از روش یک‌کلیکی (`.mcpb`) استفاده کنید، یا مسیر کامل خروجی `which npx` را به‌جای `npx` بگذارید |
 | `npx` در ایران کند است یا خطا می‌دهد | registry را عوض کنید یا از روش `.mcpb` استفاده کنید که اینترنت لازم ندارد |
 | دستیار از ابزار استفاده نمی‌کند | صریح بگویید: «با ابزار pep بررسی کن» |
-
-## ساختار پروژه
-
-```
-data/
-  docs/            مستندات Markdown (هر سرویس و راهنما یک فایل)
-  errors.json      جدول کامل کدهای خطا
-  endpoints.json   قرارداد ساخت‌یافته سرویس‌ها (برای اعتبارسنجی و شبیه‌ساز)
-src/
-  server.ts        Express + Streamable HTTP (stateless) + /health
-  auth.ts          احراز هویت اختیاری با توکن Bearer
-  spec.ts / validate.ts / decision.ts   قرارداد سرویس‌ها، اعتبارسنجی و تصمیم‌گیری
-  sandbox/         شبیه‌ساز درگاه (node:http، بدون وابستگی)
-  sandbox-cli.ts   اجرای مستقل شبیه‌ساز
-  stdio.ts         اجرای محلی
-  mcp.ts           تعریف ابزارها (SDK رسمی MCP)
-  tools.ts         منطق ابزارها، مستقل از SDK و قابل تست
-  types.ts
-test/              تست‌ها (node:test)
-manifest.json      پیکربندی افزونه Claude Desktop (.mcpb)
-.claude-plugin/    Plugin و Marketplace برای Claude Code
-skills/pep-ipg/    Skill (SKILL.md + references، ساخته‌شده از data/ با npm run build:skill)
-docker-compose.yml اجرای سرور HTTP با Docker
-deploy/            نمونه Nginx (HTTPS) و systemd
-```
 
 ## توسعه
 
