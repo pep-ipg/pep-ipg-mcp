@@ -40,9 +40,19 @@ jobs:
       - run: npm run build
       - run: npm test
 
+      # Skipped when NPM_TOKEN is unset or this version is already on npm
+      # (for example, published by hand). A failure here does not block the
+      # GitHub Release below.
       - name: Publish to npm
         if: ${{ env.NODE_AUTH_TOKEN != '' }}
-        run: npm publish --provenance --access public
+        continue-on-error: true
+        run: |
+          VER=$(node -p "require('./package.json').version")
+          if npm view "pep-ipg-mcp@$VER" version >/dev/null 2>&1; then
+            echo "pep-ipg-mcp@$VER is already on npm, skipping"
+          else
+            npm publish --provenance --access public
+          fi
 
       - name: Build Claude Desktop extension (.mcpb)
         run: |
@@ -53,6 +63,7 @@ jobs:
         run: cd skills && zip -r ../pep-ipg-skill.zip pep-ipg
 
       - name: Create GitHub Release
+        if: ${{ always() }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
