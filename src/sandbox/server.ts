@@ -299,7 +299,14 @@ export async function startSandbox(opts: SandboxOptions = {}): Promise<Sandbox> 
 
     const r = handler(body);
     if (fault?.mode === "applied_then_error") {
-      store.record({ method: "POST", path: pathname, status: 500, resultCode: fault.code, note: `applied (real result ${r.body.resultCode}) then failed` });
+      if (r.body.resultCode !== 0) {
+        // Nothing was applied (validation error, wrong state...): return the real answer
+        // and keep the fault armed for the next call that does apply.
+        store.restoreFault(fault);
+        store.record({ method: "POST", path: pathname, status: r.status, resultCode: r.body.resultCode, note: `fault #${fault.id} not fired: operation not applied, still armed` });
+        return sendJson(res, r);
+      }
+      store.record({ method: "POST", path: pathname, status: 500, resultCode: fault.code, note: "applied then failed" });
       return sendJson(res, fail(fault.code, { note: `injected fault #${fault.id}: the operation WAS applied` }, 500));
     }
     store.record({ method: "POST", path: pathname, status: r.status, resultCode: r.body.resultCode });

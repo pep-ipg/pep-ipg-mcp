@@ -178,7 +178,10 @@ export class SandboxStore {
   /** Apply the cardholder's choice on the payment page. Returns the callback URL. */
   pay(tx: Transaction, outcome: Outcome): string {
     this.tick(tx);
-    if (tx.state !== "CREATED" && outcome !== "expire") throw new Error(`transaction is ${tx.state}, not awaiting payment`);
+    // The page timer posts "expire" once time is up, by which point tick() may already have
+    // marked the transaction EXPIRED. Any other state means the link was already used.
+    const awaiting = tx.state === "CREATED" || (outcome === "expire" && tx.state === "EXPIRED");
+    if (!awaiting) throw new Error(`transaction is ${tx.state}, not awaiting payment`);
     const now = this.now();
     let status: string = outcome;
     switch (outcome) {
@@ -236,6 +239,12 @@ export class SandboxStore {
     f.remaining--;
     if (f.remaining <= 0) this.faults = this.faults.filter((x) => x !== f);
     return f;
+  }
+
+  /** Give back a fault taken by takeFault that did not fire. */
+  restoreFault(f: Fault): void {
+    f.remaining++;
+    if (!this.faults.includes(f)) this.faults.unshift(f);
   }
 
   record(entry: Omit<LogEntry, "at">) {

@@ -1,6 +1,7 @@
 import express, { type Request, type Response } from "express";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isAuthorized } from "./auth.js";
+import { jsonRpcErrorHandler } from "./http-errors.js";
 import { createMcpServer, VERSION } from "./mcp.js";
 import { loadCorpus } from "./tools.js";
 
@@ -65,6 +66,9 @@ const methodNotAllowed = (_req: Request, res: Response) => {
 };
 app.get("/mcp", methodNotAllowed);
 app.delete("/mcp", methodNotAllowed);
+
+// Invalid JSON, oversized body and other errors → JSON-RPC error instead of an HTML page.
+app.use(jsonRpcErrorHandler);
 
 const PORT = Number(process.env.PORT ?? 3000);
 const HOST = process.env.HOST ?? "0.0.0.0";

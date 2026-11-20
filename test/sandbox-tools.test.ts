@@ -26,6 +26,7 @@ test("tool layer: start, pay with callback, status, resolve, inject, clock", asy
   const out = await payTx(sb, "A1", "success", true);
   assert.match(out, /HTTP 200/);
   assert.ok(hits.some((h) => h.includes("invoiceId=A1") && h.includes("status=success")));
+  await assert.rejects(payTx(sb, "A1", "expire", false), /not awaiting payment/, "paid invoice cannot be expired");
 
   await buy("A2");
   await payTx(sb, "A2", "unknown", false);

@@ -202,6 +202,59 @@ test("fault injection: error, applied_then_error (verify really applied)", async
   assert.equal((await api("/api/payment/verify-payment", { invoice, urlId: p.data.urlId, checkVerify: true }, t)).resultCode, 13428);
 });
 
+test("applied_then_error only fires on a call that really applies", async () => {
+  const t = await token();
+  const invoice = nextInvoice();
+  const p = await api("/api/payment/purchase", purchaseBody(invoice), t);
+  await payViaPage(p.data.url, "success");
+  sb.store.clearFaults();
+  sb.store.addFault({ endpoint: "verify-payment", mode: "applied_then_error", code: 500, delaySec: 0, remaining: 1 });
+
+  // urlId missing: real validation error comes back, nothing applied, fault stays armed.
+  const bad = await api("/api/payment/verify-payment", { invoice }, t);
+  assert.equal(bad.http, 200);
+  assert.equal(bad.resultCode, 13000);
+  assert.doesNotMatch(String(bad.note ?? ""), /WAS applied/);
+  assert.equal((await api("/api/payment/payment-inquiry", { invoiceId: invoice, checkVerify: true }, t)).data.status, 0);
+  assert.equal(sb.store.listFaults().length, 1);
+
+  // Valid call: verify is applied, then the injected HTTP 500.
+  const r = await api("/api/payment/verify-payment", { invoice, urlId: p.data.urlId }, t);
+  assert.equal(r.http, 500);
+  assert.match(r.note, /WAS applied/);
+  assert.equal(sb.store.listFaults().length, 0);
+  assert.equal((await api("/api/payment/payment-inquiry", { invoiceId: invoice, checkVerify: true }, t)).data.status, 13034);
+});
+
+test("a used payment link rejects a late expire; the page timer still expires an unpaid one", async () => {
+  const t = await token();
+  const form = (outcome: string) => ({
+    method: "POST", redirect: "manual" as const,
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `outcome=${outcome}`,
+  });
+
+  const invoice = nextInvoice();
+  const p = await api("/api/payment/purchase", purchaseBody(invoice), t);
+  await payViaPage(p.data.url, "success");
+  const late = await fetch(p.data.url, form("expire"));
+  await late.text();
+  assert.equal(late.status, 409);
+  assert.equal((await api("/api/payment/payment-inquiry", { invoiceId: invoice }, t)).data.status, 0, "still PAID");
+
+  // Timer fires after the page TTL, when tick() has already marked the transaction EXPIRED.
+  const e = nextInvoice();
+  const pe = await api("/api/payment/purchase", purchaseBody(e), t);
+  sb.store.fastForward(11);
+  try {
+    const res = await fetch(pe.data.url, form("expire"));
+    assert.equal(res.status, 302);
+    assert.equal(new URL(res.headers.get("location")!).searchParams.get("status"), "expire");
+  } finally {
+    sb.store.fastForward(-11);
+  }
+});
+
 test("split payment, pre-transaction bill, referer strict", async () => {
   const t = await token();
   const s = await api("/api/payment/multiacc/purchase", {
