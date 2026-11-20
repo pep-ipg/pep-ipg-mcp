@@ -1,23 +1,29 @@
 name: CI
 on:
   push:
-    branches: [main]
+    branches: ["**"]   # every branch (tags are handled by release.yml)
   pull_request:
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
+      fail-fast: false
       matrix:
-        node: [18, 20, 22]
+        node: [18, 20, 22, 24]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
       - run: npm run build
       - run: npm test
+        timeout-minutes: 5
+      - name: Versions are in sync (package, manifest, plugin, server)
+        run: node scripts/check-versions.mjs
       - name: Skill references are in sync with data/
         run: |
           npm run build:skill

@@ -1,6 +1,6 @@
 {
   "name": "pep-ipg",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Pasargad Electronic Payment IPG (Dorsa protocol v28): integration skill plus MCP server with doc search, request validation and a local gateway sandbox",
   "author": {
     "name": "Pasargad Electronic Payment Co.",
@@ -22,7 +22,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "pep-ipg-mcp@latest"
+        "pep-ipg-mcp@1.2.6"
       ]
     }
   }

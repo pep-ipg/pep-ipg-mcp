@@ -1,97 +1,105 @@
 name: Release
 
-# Push a tag like v1.1.0 to publish:
-#   - npm package (npx pep-ipg-mcp)
-#   - Claude Desktop extension (.mcpb) attached to a GitHub Release
+# Push a tag like v1.2.6 to publish:
+#   - Claude Desktop extension (.mcpb) and claude.ai skill zip on a GitHub Release
+#   - npm package (npx pep-ipg-mcp), via npm Trusted Publishing (OIDC, no token)
+#   - Docker image on ghcr.io
 on:
   push:
     tags: ["v*"]
 
 permissions:
   contents: write   # create the GitHub Release
-  id-token: write   # npm provenance
+  id-token: write   # npm Trusted Publishing + provenance
   packages: write   # push the Docker image to ghcr.io
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
           registry-url: https://registry.npmjs.org
 
-      - name: Check tag matches package.json and manifest.json
-        run: |
-          TAG="${GITHUB_REF_NAME#v}"
-          PKG=$(node -p "require('./package.json').version")
-          MAN=$(node -p "require('./manifest.json').version")
-          if [ "$TAG" != "$PKG" ] || [ "$TAG" != "$MAN" ]; then
-            echo "::error::tag v$TAG, package.json $PKG, manifest.json $MAN must match"
-            exit 1
-          fi
+      - name: Check tag matches every version field
+        run: node scripts/check-versions.mjs "${GITHUB_REF_NAME#v}"
 
       - run: npm ci
       - run: npm run build
       - run: npm test
+        timeout-minutes: 5
 
-      # npm Trusted Publishing (OIDC): no token needed once the trusted
-      # publisher is registered on npmjs.com. NPM_TOKEN, if still set, is
-      # used as a fallback. Needs npm >= 11.5.1. Skipped when this version
-      # is already on npm; a failure here does not block the GitHub Release.
-      - name: Publish to npm
-        continue-on-error: true
-        run: |
-          npm install -g npm@latest
-          VER=$(node -p "require('./package.json').version")
-          if npm view "pep-ipg-mcp@$VER" version >/dev/null 2>&1; then
-            echo "pep-ipg-mcp@$VER is already on npm, skipping"
-          else
-            npm publish --provenance --access public
-          fi
+      - name: Package the skill for claude.ai
+        run: cd skills && zip -r ../pep-ipg-skill.zip pep-ipg
 
       - name: Build Claude Desktop extension (.mcpb)
         run: |
           npm prune --omit=dev
           npx -y @anthropic-ai/mcpb pack . pep-ipg-mcp.mcpb
 
-      - name: Package the skill for claude.ai
-        run: cd skills && zip -r ../pep-ipg-skill.zip pep-ipg
-
+      # Created before npm publish, so the .mcpb and skill zip ship even if npm fails.
       - name: Create GitHub Release
-        if: ${{ always() }}
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             pep-ipg-mcp.mcpb
             pep-ipg-skill.zip
           generate_release_notes: true
 
+      # Trusted Publishing only: register this repo + release.yml as the trusted
+      # publisher on npmjs.com. No NPM_TOKEN secret is used. Needs npm >= 11.5.1.
+      # Build and tests already ran above, so prepublish scripts are skipped.
+      # A failure here fails the job (red), it is no longer hidden.
+      - name: Publish to npm
+        run: |
+          npm install -g npm@latest
+          VER=$(node -p "require('./package.json').version")
+          if npm view "pep-ipg-mcp@$VER" version >/dev/null 2>&1; then
+            echo "pep-ipg-mcp@$VER is already on npm, skipping"
+          else
+            npm publish --provenance --access public --ignore-scripts
+          fi
+
+      - name: Verify the version is on npm
+        run: |
+          VER=$(node -p "require('./package.json').version")
+          for i in $(seq 1 12); do
+            if [ "$(npm view "pep-ipg-mcp@$VER" version 2>/dev/null)" = "$VER" ]; then
+              echo "pep-ipg-mcp@$VER is live on npm"
+              exit 0
+            fi
+            echo "not visible yet ($i/12), waiting 10s"
+            sleep 10
+          done
+          echo "::error::pep-ipg-mcp@$VER is not on npm after 2 minutes"
+          exit 1
+
   docker:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
             type=semver,pattern={{version}}
             type=raw,value=latest
 
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: .
           push: true

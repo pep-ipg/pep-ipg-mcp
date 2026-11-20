@@ -21,8 +21,9 @@ before(async () => {
   merchantUrl = `http://127.0.0.1:${(merchant.address() as AddressInfo).port}/callback`;
 });
 after(async () => {
-  await sb.close();
-  await new Promise<void>((r) => merchant.close(() => r()));
+  await sb?.close();
+  merchant?.closeAllConnections();
+  await new Promise<void>((r) => (merchant ? merchant.close(() => r()) : r()));
 });
 
 async function api(path: string, body: unknown, token?: string) {
@@ -273,10 +274,13 @@ test("split payment, pre-transaction bill, referer strict", async () => {
   assert.equal(q.data.status, 13016);
 
   sb.store.config.refererCheck = "strict";
-  const p = await api("/api/payment/purchase", purchaseBody(nextInvoice()), t);
-  assert.equal((await fetch(p.data.url)).status, 403);
-  assert.equal((await fetch(p.data.url, { headers: { Referer: merchantUrl } })).status, 200);
-  sb.store.config.refererCheck = "off";
+  try {
+    const p = await api("/api/payment/purchase", purchaseBody(nextInvoice()), t);
+    assert.equal((await fetch(p.data.url)).status, 403);
+    assert.equal((await fetch(p.data.url, { headers: { Referer: merchantUrl } })).status, 200);
+  } finally {
+    sb.store.config.refererCheck = "off";
+  }
 });
 
 test("publicUrl is used for payment page links", async () => {
@@ -293,4 +297,9 @@ test("publicUrl is used for payment page links", async () => {
   } finally {
     await s2.close();
   }
+});
+
+test("busy port gives a readable error", async () => {
+  const port = Number(new URL(sb.listenUrl).port);
+  await assert.rejects(startSandbox({ port }), /already in use.*PEP_SANDBOX_PORT/s);
 });

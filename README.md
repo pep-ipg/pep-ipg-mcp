@@ -177,6 +177,8 @@ docker run -d -p 3000:3000 --restart unless-stopped ghcr.io/pep-ipg/pep-ipg-mcp:
 claude mcp add --transport http pep https://YOUR-HOST/mcp
 ```
 
+اگر `PEP_MCP_AUTH_TOKEN` تنظیم شود، کلاینت‌ها باید هدر `Authorization: Bearer <token>` بفرستند. بدون توکن، `node dist/server.js` فقط روی `127.0.0.1` گوش می‌دهد؛ برای باز کردن روی شبکه `HOST=0.0.0.0` را صریحاً تنظیم کنید (ایمیج Docker این کار را می‌کند) و سرور را پشت توکن یا پروکسی احراز هویت بگذارید.
+
 در **ChatGPT** (پلن‌های پولی، با Developer Mode): همین آدرس را در بخش Connectors اضافه کنید. شبیه‌ساز در حالت آنلاین در دسترس نیست و فقط روی سیستم خود توسعه‌دهنده اجرا می‌شود.
 
 ## شبیه‌ساز درگاه (Sandbox)

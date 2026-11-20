@@ -28,17 +28,21 @@ git push -u origin main
 - **About** (چرخ‌دنده کنار About در صفحه اصلی): توضیح کوتاه + topics: `mcp`, `model-context-protocol`, `payment-gateway`, `iran`, `pasargad`
 - در تب **Actions** باید CI سبز شود.
 
-### ۳. npm (برای نصب با `npx`)
-1. در [npmjs.com](https://www.npmjs.com) حساب بسازید و 2FA را فعال کنید.
-2. بررسی آزاد بودن نام: `npm view pep-ipg-mcp` باید خطای 404 بدهد. اگر نام گرفته شده بود، `name` در `package.json` و همه `npx -y pep-ipg-mcp` در README را عوض کنید.
-3. **Access Tokens → Generate New Token → Granular**، با دسترسی **Read and write** روی همین پکیج (برای انتشار اول: All packages).
-4. در GitHub: **Settings → Secrets and variables → Actions → New repository secret**، با نام `NPM_TOKEN`.
+### ۳. npm (برای نصب با `npx`) — Trusted Publishing، بدون توکن
+1. در [npmjs.com](https://www.npmjs.com) با حسابی که 2FA دارد وارد شوید.
+2. صفحه پکیج `pep-ipg-mcp` → **Settings → Trusted Publisher → GitHub Actions** و این مقادیر:
+   - Organization or user: `pep-ipg`
+   - Repository: `pep-ipg-mcp`
+   - Workflow filename: `release.yml`
+   - Environment: خالی
+3. در همان صفحه، **Publishing access** را روی «Require two-factor authentication and disallow tokens» بگذارید تا انتشار فقط از GitHub Actions ممکن باشد.
+4. در GitHub هیچ secret مربوط به npm لازم نیست. اگر `NPM_TOKEN` از قبل هست، از **Settings → Secrets and variables → Actions** حذفش کنید و توکن را در npmjs.com هم revoke کنید.
 
-> اگر فعلاً نمی‌خواهید روی npm منتشر کنید، این مرحله را رد کنید. Release و فایل `.mcpb` همچنان ساخته می‌شوند.
+> اگر انتشار npm شکست بخورد، job قرمز می‌شود، ولی Release گیت‌هاب با فایل `.mcpb` و zip اسکیل قبل از آن ساخته شده است.
 
 ## هر بار: انتشار نسخه جدید
 
-1. نسخه را در **هر دو** فایل `package.json` و `manifest.json` و ثابت `VERSION` در `src/mcp.ts` به‌روز کنید.
+1. نسخه را در همه این‌ها یکی کنید: `package.json`، `package-lock.json`، `manifest.json`، `.claude-plugin/plugin.json` (هم `version` و هم `pep-ipg-mcp@X.Y.Z` در `mcpServers`)، `.claude-plugin/marketplace.json` و ثابت `VERSION` در `src/mcp.ts`. برای چک: `node scripts/check-versions.mjs`
 2. یک بخش جدید در `CHANGELOG.md` بنویسید.
 3. tag بزنید:
 ```bash
@@ -48,13 +52,14 @@ git push && git push --tags
 ```
 
 workflow `Release` به‌صورت خودکار:
-- نسخه tag را با `package.json` و `manifest.json` تطبیق می‌دهد
+- نسخه tag را با همه فایل‌های بالا تطبیق می‌دهد
 - build و تست می‌کند
-- روی npm منتشر می‌کند (اگر `NPM_TOKEN` تعریف شده باشد)
-- `pep-ipg-mcp.mcpb` را می‌سازد و به GitHub Release ضمیمه می‌کند
+- `pep-ipg-mcp.mcpb` و `pep-ipg-skill.zip` را می‌سازد و به GitHub Release ضمیمه می‌کند
+- با Trusted Publishing روی npm منتشر می‌کند و بعد بررسی می‌کند نسخه واقعاً روی npm آمده باشد
+- ایمیج Docker را روی `ghcr.io/pep-ipg/pep-ipg-mcp` می‌گذارد
 
 لینک دانلود ثابت (در README استفاده شده):
-`https://github.com/YOUR_GITHUB_USERNAME/pep-ipg-mcp/releases/latest/download/pep-ipg-mcp.mcpb`
+`https://github.com/pep-ipg/pep-ipg-mcp/releases/latest/download/pep-ipg-mcp.mcpb`
 
 ## به‌روزرسانی برای نسخه جدید پروتکل
 فقط `data/docs/*.md` و `data/errors.json` را ویرایش کنید، `npm test` بزنید، CHANGELOG را به‌روز کنید و نسخه جدید را tag کنید.

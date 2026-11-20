@@ -71,11 +71,29 @@ app.delete("/mcp", methodNotAllowed);
 app.use(jsonRpcErrorHandler);
 
 const PORT = Number(process.env.PORT ?? 3000);
-const HOST = process.env.HOST ?? "0.0.0.0";
+// Without a token, stay on loopback unless HOST is set explicitly (Docker sets HOST=0.0.0.0).
+const HOST = process.env.HOST?.trim() || (AUTH_TOKEN ? "0.0.0.0" : "127.0.0.1");
+const LOOPBACK = ["127.0.0.1", "localhost", "::1"];
 const httpServer = app.listen(PORT, HOST, () => {
+  const addr = httpServer.address();
+  const port = addr && typeof addr === "object" ? addr.port : PORT;
   console.log(
-    `PEP IPG MCP v${VERSION} on http://${HOST}:${PORT}/mcp (${corpus.docs.size} docs, auth ${AUTH_TOKEN ? "on" : "off"})`,
+    `PEP IPG MCP v${VERSION} on http://${HOST}:${port}/mcp (${corpus.docs.size} docs, auth ${AUTH_TOKEN ? "on" : "off"})`,
   );
+  if (!AUTH_TOKEN && !LOOPBACK.includes(HOST)) {
+    console.warn(
+      `WARNING: listening on ${HOST} without authentication. Anyone who can reach this port can use the server. ` +
+        `Set PEP_MCP_AUTH_TOKEN, or put it behind a proxy that authenticates.`,
+    );
+  }
+});
+httpServer.on("error", (err: NodeJS.ErrnoException) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`Port ${PORT} on ${HOST} is already in use. Stop the other process or set PORT to a free port.`);
+  } else {
+    console.error("HTTP server failed:", err);
+  }
+  process.exit(1);
 });
 
 for (const sig of ["SIGINT", "SIGTERM"] as const) {

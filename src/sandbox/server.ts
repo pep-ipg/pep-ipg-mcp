@@ -375,9 +375,19 @@ export async function startSandbox(opts: SandboxOptions = {}): Promise<Sandbox> 
     }
   });
 
+  const port = opts.port ?? 8787;
   await new Promise<void>((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(opts.port ?? 8787, host, () => resolve());
+    server.once("error", (err: NodeJS.ErrnoException) => {
+      reject(
+        err.code === "EADDRINUSE"
+          ? new Error(
+              `Sandbox port ${port} on ${host} is already in use (maybe another sandbox is running). ` +
+                `Stop it, or choose another port (sandbox_start port, --port or PEP_SANDBOX_PORT).`,
+            )
+          : err,
+      );
+    });
+    server.listen(port, host, () => resolve());
   });
   const addr = server.address() as AddressInfo;
   const listenUrl = `http://${host === "0.0.0.0" ? "127.0.0.1" : host}:${addr.port}`;
