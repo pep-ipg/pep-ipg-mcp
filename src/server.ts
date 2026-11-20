@@ -1,9 +1,16 @@
+import { webcrypto } from "node:crypto";
 import express, { type Request, type Response } from "express";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isAuthorized } from "./auth.js";
 import { jsonRpcErrorHandler } from "./http-errors.js";
 import { createMcpServer, VERSION } from "./mcp.js";
 import { loadCorpus } from "./tools.js";
+
+// Node 18 has no global `crypto`; the MCP SDK's HTTP transport needs it (found by test/e2e.test.ts).
+// Remove when Node 18 support is dropped.
+if (!(globalThis as { crypto?: unknown }).crypto) {
+  Object.defineProperty(globalThis, "crypto", { value: webcrypto, configurable: true });
+}
 
 const corpus = loadCorpus();
 const startedAt = new Date().toISOString();
