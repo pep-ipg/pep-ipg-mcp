@@ -9,7 +9,7 @@ import {
   configure, describeStart, ensureSandbox, injectFault, payTx, resolveTx, statusReport,
 } from "./sandbox/tools.js";
 
-export const VERSION = "1.2.4";
+export const VERSION = "1.2.5";
 
 const INSTRUCTIONS = `This server documents the Pasargad Electronic Payment (PEP) internet payment gateway, Dorsa protocol v28.0 (1405/08/12).
 Auth is JWT Bearer via POST /token/getToken — NOT the legacy RSA/XML signing. Amounts are integer Rials. All services are POST + JSON.

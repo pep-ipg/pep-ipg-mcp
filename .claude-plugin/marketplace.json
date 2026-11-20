@@ -12,7 +12,7 @@
       "name": "pep-ipg",
       "source": "./",
       "description": "Pasargad IPG (Dorsa protocol v28) integration: endpoint contracts, error codes, auth flow and implementation rules",
-      "version": "1.2.4",
+      "version": "1.2.5",
       "category": "development",
       "keywords": [
         "payment-gateway",
